@@ -1,0 +1,9 @@
+services:
+  db:
+    image: mariadb
+    volumes:
+      - db_data:/var/lib/mysql
+    env_file:
+      - .env
+volumes:
+  db_data:
