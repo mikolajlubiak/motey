@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+{% if error_message %}
+<p><strong>{{ error_message }}</strong></p>
+{% endif %}
+<form action="/upload" method="post" enctype="multipart/form-data">
+    <div class="field">
+        <label class="label" style="color: rgb(194, 14, 14);"><strong>Emote name:</strong></label>
+        <div class="control" style="width: fit-content;">
+            <strong>
+                <input class="input" type="text" placeholder="Emote name..." name="emotename" id="emotename">
+            </strong>
+        </div>
+    </div>
+    <div class="field">
+        <label class="file-label">
+            <input class="file-input" type="file" name="emote" id="emote">
+            <span class="file-cta">
+                <span class="file-icon">
+                    <i class="fas fa-upload"></i>
+                </span>
+                <span class="file-label">
+                    Choose a file...
+                </span>
+            </span>
+        </label>
+    </div>
+    <div class="field">
+        <div class="control">
+            <input class="button" type="submit" value="Submit">
+        </div>
+    </div>
+</form>
+{% endblock %}

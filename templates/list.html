@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+{% if emotes %}
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Emote</th>
+    </tr>
+    {% for emote in emotes %}
+    <tr>
+        <td>
+            <strong>{{ emote.name }}</strong>
+            <img src='{{ emote.location }}' style='max-width:100px;width:100%%'>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Motey - Emote Bot</title>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+		<link rel="icon" type="image/png" href='favicon.png'/>
+	</head>
+	<body>
+		<!--"Header"-->
+		<section class="hero is-black">
+			<div class="hero-body is-fullheight">
+				<p class="title">
+				Motey
+				</p>
+				<p class="subtitle">
+				Emote bot made by Mikołaj Lubiak
+				</p>
+			</div>
+		</section>
+		<!--Nav bar (te linki poniżej)-->
+		<nav class="navbar has-text-black-bis" role="navigation" aria-label="main navigation">
+			<div id="navbar" class="navbar-menu">
+				<div class="navbar-start">
+					<a class="navbar-item" href="/list">
+						Emote List
+					</a>
+					<a class="navbar-item" href="https://discord.com/api/oauth2/authorize?client_id=1108722454353948692&permissions=8&scope=bot">
+						Bot Invite
+					</a>
+					<a class="navbar-item" href="https://discord.gg/pq9Jjg5Dfj">
+						Discord Server
+					</a>
+
+				</div>
+			</div>
+		</nav>
+		<!--Uploader-->
+		<div class="container">
+          <div id="content">{% block content %} {% endblock %}</div>
+		</div>
+	</body>
+</html>

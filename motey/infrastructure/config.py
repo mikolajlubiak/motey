@@ -22,3 +22,4 @@ class Config:
     project_root = base_dir.parent
     templates_dir = project_root / 'templates'
     static_files_dir = project_root / 'static'
+    emotes_dir = project_root / 'static' / 'emotes'
