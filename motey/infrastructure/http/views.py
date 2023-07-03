@@ -63,7 +63,7 @@ async def register(request: web.Request):
     hashed_password = hashlib.sha512((password + salt).encode()).hexdigest()
     with request.app['db'].connect() as connection:
         statement = select(users)\
-            .where(user.c.login==login)
+            .where(users.c.login==login)
         user = connection.execute(statement).one_or_none()
         if user:
             return {'error_message': 'User with this login already exists.'}
