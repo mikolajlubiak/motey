@@ -19,7 +19,7 @@ users = Table(
     Column('login', VARCHAR(32), nullable=False, unique=True),
     Column('hashed_password', VARCHAR(128), nullable=False),
     Column('salt', VARCHAR(32), nullable=False),
-    Column('session_id', VARCHAR(32), nullable=False, unique=True),
+    Column('session_id', VARCHAR(32), unique=True),
     Column('created_at', DATETIME, server_default=func.current_timestamp())
 )
 

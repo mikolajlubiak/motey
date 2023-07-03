@@ -63,8 +63,8 @@ async def register(request: web.Request):
     hashed_password = hashlib.sha512((password + salt).encode()).hexdigest()
     with request.app['db'].connect() as connection:
         statement = select(users)\
-            .where(login==login)
-        user = connection.scalars(statement).all()
+            .where(user.c.login==login)
+        user = connection.execute(statement).one_or_none()
         if user:
             return {'error_message': 'User with this login already exists.'}
 
@@ -89,18 +89,20 @@ async def login(request: web.Request):
         return {'error_message': 'Please enter login and password.'}
     with request.app['db'].connect() as connection:
         statement = select(users)\
-            .where(login==login)
-        user = connection.scalars(statement).all()
-        if not user or user.hashed_password != hashlib.sha512((password + user.salt).encode()).hexdigest():
+            .where(users.c.login==login)
+        user = connection.execute(statement).one_or_none()
+        if not user or user[2] != hashlib.sha512((password + user[3]).encode()).hexdigest():
             return {'error_message': 'Invalid login data.'}
         session_id = secrets.token_hex(16)
         statement = (
             update(users).
-            where(login==login).
+            where(users.c.login==login).
             values(session_id=session_id)
         )
         connection.execute(statement)
         connection.commit()
 
-        web.Response.set_cookie("session_id")
+        response = web.Response(text='Login successful')
+        response.set_cookie('session_id', session_id, httponly=True)
+
     raise web.HTTPFound(location='/')
