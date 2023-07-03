@@ -27,3 +27,8 @@ Now you can start HTTP server:
 ```shell
 ./run.sh
 ```
+
+And / or Discord bot:
+```shell
+./bot.sh
+```
