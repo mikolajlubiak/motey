@@ -44,4 +44,4 @@ class EmoteFileWriter:
         return self._emotes_dir / self._emote_name / f'.{extension}'
 
     def _get_file_extension(self) -> str:
-        return self._file_name.split()[-1]
+        return self._file_name.split('.')[-1]
