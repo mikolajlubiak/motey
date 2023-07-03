@@ -76,8 +76,8 @@ async def login(request: web.Request, config: Config = Config()):
         statement = select(user_id)\
             .where(login=login, password=password)
         userId = connection.scalars(statement).one()
-        if userId:
+        # TODO
+        # if userId:
             # Successful login
-            # TODO
             # Set session cookie
     raise web.HTTPFound(location='/')
