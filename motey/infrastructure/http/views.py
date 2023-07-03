@@ -61,7 +61,7 @@ async def register(request: web.Request):
     if not password:
         return {'error_message': 'Please enter password'}
     with request.app['db'].connect() as connection:
-        statement = insert(tables.emotes)\
+        statement = insert(tables.users)\
             .values(login=login, password=password)
         connection.execute(statement)
         connection.commit()
@@ -84,9 +84,9 @@ async def login(request: web.Request):
     if not password:
         return {'error_message': 'Please enter password'}
     with request.app['db'].connect() as connection:
-        statement = select(users.id)\
-            .where(login=login, password=password)
-        userId = connection.scalars(statement).one()
+        statement = select(users)\
+            .where(login==login, password==password)
+        userId = connection.scalars(statement).one_or_none()
         # TODO
         # if userId:
             # Successful login
