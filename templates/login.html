@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+{% if error_message %}
+<p><strong>{{ error_message }}</strong></p>
+{% endif %}
+<form action="/login" method="post" enctype="multipart/form-data">
+    <div class="field">
+        <label class="label" style="color: rgb(194, 14, 14);"><strong>Login:</strong></label>
+        <div class="control" style="width: fit-content;">
+            <strong>
+                <input class="input" type="text" placeholder="Login..." name="login" id="login" required>
+            </strong>
+        </div>
+    </div>
+    <div class="field">
+        <label class="label" style="color: rgb(194, 14, 14);"><strong>Password:</strong></label>
+        <div class="control" style="width: fit-content;">
+            <strong>
+                <input class="input" type="password" placeholder="Password..." name="password" id="password" required>
+            </strong>
+        </div>
+    </div>
+    <div class="field">
+        <div class="control">
+            <input class="button" type="submit" formaction="/login" value="Login">
+            <input class="button" type="submit" formaction="/register" value="Register">
+        </div>
+    </div>
+</form>
+{% endblock %}

@@ -1,6 +1,8 @@
 from aiohttp import web
 import aiohttp_jinja2
 from sqlalchemy import insert
+from sqlalchemy import select
+import hashlib
 
 from motey.infrastructure.database import tables
 from motey.infrastructure.config import Config
@@ -22,6 +24,8 @@ async def index(request: web.Request):
 
 @aiohttp_jinja2.template('index.html')
 async def upload(request: web.Request, config: Config = Config()):
+    # TODO
+    # Check if the user has proper session cookie
     data = await request.post()
     emote_name = data['emotename']
     if not emote_name:
@@ -38,4 +42,42 @@ async def upload(request: web.Request, config: Config = Config()):
             .values(name=emote_name, location=location)
         connection.execute(statement)
         connection.commit()
+    raise web.HTTPFound(location='/')
+
+@aiohttp_jinja2.template('login.html')
+async def register(request: web.Request, config: Config = Config()):
+    data = await request.post()
+    login = data['login']
+    password = data['password']
+    password = hashlib.sha512(password.encode()).hexdigest()
+    if not login:
+        return {'error_message': 'Please enter login'}
+    if not password:
+        return {'error_message': 'Please enter password'}
+    with request.app['db'].connect() as connection:
+        statement = insert(tables.emotes)\
+            .values(login=login, password=password)
+        connection.execute(statement)
+        connection.commit()
+    raise web.HTTPFound(location='/')
+
+
+@aiohttp_jinja2.template('login.html')
+async def login(request: web.Request, config: Config = Config()):
+    data = await request.post()
+    login = data['login']
+    password = data['password']
+    password = hashlib.sha512(password.encode()).hexdigest()
+    if not login:
+        return {'error_message': 'Please enter login'}
+    if not password:
+        return {'error_message': 'Please enter password'}
+    with request.app['db'].connect() as connection:
+        statement = select(user_id)\
+            .where(login=login, password=password)
+        userId = connection.scalars(statement).one()
+        if userId:
+            # Successful login
+            # TODO
+            # Set session cookie
     raise web.HTTPFound(location='/')
