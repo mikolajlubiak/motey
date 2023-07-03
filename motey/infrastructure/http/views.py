@@ -86,7 +86,7 @@ async def login(request: web.Request):
     with request.app['db'].connect() as connection:
         statement = select(users)\
             .where(login==login, password==password)
-        userId = connection.scalars(statement).one_or_none()
+        userId = connection.scalars(statement).all()
         # TODO
         # if userId:
             # Successful login
