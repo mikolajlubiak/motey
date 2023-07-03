@@ -1,8 +1,12 @@
 from aiohttp import web
 import aiohttp_jinja2
+
 from sqlalchemy import insert
 from sqlalchemy import select
+from sqlalchemy import update
+
 import hashlib
+import secrets
 
 from motey.infrastructure.database import tables
 from motey.infrastructure.database.tables import users
@@ -55,14 +59,19 @@ async def register(request: web.Request):
     data = await request.post()
     login = data['login']
     password = data['password']
-    password = hashlib.sha512(password.encode()).hexdigest()
-    if not login:
-        return {'error_message': 'Please enter login'}
-    if not password:
-        return {'error_message': 'Please enter password'}
+    if not login or not password:
+        return {'error_message': 'Please enter login and password.'}
+    salt = secrets.token_hex(16)
+    hashed_password = hashlib.sha512((password + salt).encode()).hexdigest()
     with request.app['db'].connect() as connection:
+        statement = select(users)\
+            .where(login==login)
+        user = connection.scalars(statement).all()
+        if user:
+            return {'error_message': 'User with this login already exists.'}
+
         statement = insert(tables.users)\
-            .values(login=login, password=password)
+            .values(login=login, hashed_password=hashed_password, salt=salt)
         connection.execute(statement)
         connection.commit()
     raise web.HTTPFound(location='/')
@@ -78,17 +87,22 @@ async def login(request: web.Request):
     data = await request.post()
     login = data['login']
     password = data['password']
-    password = hashlib.sha512(password.encode()).hexdigest()
-    if not login:
-        return {'error_message': 'Please enter login'}
-    if not password:
-        return {'error_message': 'Please enter password'}
+    if not login or not password:
+        return {'error_message': 'Please enter login and password.'}
     with request.app['db'].connect() as connection:
         statement = select(users)\
-            .where(login==login, password==password)
-        user_id = connection.scalars(statement).all()
-        # TODO
-        # if user_id:
-            # Successful login
-            # Set session cookie
+            .where(login==login)
+        user = connection.scalars(statement).all()
+        if not user or user.hashed_password != hashlib.sha512((password + user.salt).encode()).hexdigest():
+            return {'error_message': 'Invalid login data.'}
+        session_id = secrets.token_hex(16)
+        statement = (
+            update(users).
+            where(login==login).
+            values(session_id=session_id)
+        )
+        connection.execute(statement)
+        connection.commit()
+
+        web.Response.set_cookie("session_id")
     raise web.HTTPFound(location='/')
