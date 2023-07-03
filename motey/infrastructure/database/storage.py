@@ -21,7 +21,7 @@ class EmoteStorage:
         return [self._convert_record_to_emote(record) for record in records]
 
     def emote_exists(self, name: str) -> bool:
-        cursor = self._connection.execute(tables.emotes.select().where(name=name))
+        cursor = self._connection.execute(tables.emotes.select().where(name==name))
         record = cursor.fetchone()
         return record is not None
 
@@ -35,24 +35,23 @@ class EmoteStorage:
             raise StorageException from e
 
     def get_emote_by_name(self, name: str) -> Optional[Emote]:
-        cursor = self._connection.execute(select(tables.emotes.c.location).where(name=name))
-        record = cursor.fetchone()[0]
+        cursor = self._connection.execute(select(tables.emotes.c.location).where(name==name))
+        record = cursor.one()
         if not record:
             return
-        emote_row = record[0]
-        return self._convert_record_to_emote(emote_row)
+        return self._convert_record_to_emote(record)
 
     def increase_emote_usage_count(self, emote_id: int) -> None:
-        statement = tables.emotes.update().where(id=emote_id).values(times_used=tables.emotes.times_used + 1)
+        statement = tables.emotes.update().where(id==emote_id).values(times_used=tables.emotes.c.times_used + 1)
         self._connection.execute(statement)
         self._connection.commit()
 
     @staticmethod
     def _convert_record_to_emote(record: Row) -> Emote:
         return Emote(
-            id=record.id,
-            name=record.name,
-            location=record.location,
-            times_used=record.times_used
+            id=record[0],
+            name=record[1],
+            location=record[2],
+            times_used=record[3]
         )
 
