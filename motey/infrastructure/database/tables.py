@@ -15,7 +15,7 @@ meta = MetaData()
 
 users = Table(
     'users', meta,
-    Column('user_id', BIGINT, primary_key=True, autoincrement=True),
+    Column('id', BIGINT, primary_key=True, autoincrement=True),
     Column('discord_id', BIGINT, nullable=False, unique=True),
     Column('login', VARCHAR(12), nullable=False, unique=True),
     Column('password', VARCHAR(512), nullable=False),
@@ -25,7 +25,7 @@ users = Table(
 
 emotes = Table(
     'emotes', meta,
-    Column('emote_id', BIGINT, primary_key=True, autoincrement=True),
+    Column('id', BIGINT, primary_key=True, autoincrement=True),
     Column('name', VARCHAR(12), nullable=False, unique=True,),
     Column('location', VARCHAR(128), nullable=False, unique=True),
     Column('times_used', BIGINT, default=0),

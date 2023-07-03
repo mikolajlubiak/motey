@@ -6,6 +6,7 @@ import hashlib
 
 from motey.infrastructure.database import tables
 from motey.infrastructure.config import Config
+from motey.infrastructure.database.tables import users
 
 
 @aiohttp_jinja2.template('list.html')
@@ -73,7 +74,7 @@ async def login(request: web.Request, config: Config = Config()):
     if not password:
         return {'error_message': 'Please enter password'}
     with request.app['db'].connect() as connection:
-        statement = select(user_id)\
+        statement = select(users.id)\
             .where(login=login, password=password)
         userId = connection.scalars(statement).one()
         # TODO
