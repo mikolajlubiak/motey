@@ -19,7 +19,7 @@ def _build_jinja_loader(config: Config = Config()) -> jinja2.FileSystemLoader:
 
 
 def run_app(config: Config = Config()) -> None:
-    app = web.Application()
+    app = web.Application(client_max_size=16780000)
     aiohttp_jinja2.setup(app, loader=_build_jinja_loader())
     setup_routes(app)
     setup_middlewares(app)
