@@ -5,17 +5,15 @@ from sqlalchemy import select
 import hashlib
 
 from motey.infrastructure.database import tables
-from motey.infrastructure.config import Config
 from motey.infrastructure.database.tables import users
+from motey.infrastructure.database.storage import EmoteStorage, StorageException
+from motey.infrastructure.filesystem import EmoteFileWriter
 
 
 @aiohttp_jinja2.template('list.html')
 async def list_emotes(request: web.Request):
     with request.app['db'].connect() as connection:
-        cursor = connection.execute(tables.emotes.select())
-        records = cursor.fetchall()
-        emotes = [emote for emote in records]
-        return {"emotes": emotes}
+        return {"emotes": EmoteStorage(connection).fetch_all_emotes()}
 
 
 @aiohttp_jinja2.template('index.html')
@@ -24,25 +22,31 @@ async def index(request: web.Request):
 
 
 @aiohttp_jinja2.template('index.html')
-async def upload(request: web.Request, config: Config = Config()):
+async def upload(request: web.Request):
     # TODO
     # Check if the user has proper session cookie
     data = await request.post()
+    emote = data['emote']
     emote_name = data['emotename']
     if not emote_name:
         return {'error_message': 'Please enter emote name'}
-    emote = data['emote']
-    filename = emote.filename
-    extension = filename.split('.')[-1]
-    emote_image = emote.file.read()
-    location = str(config.emotes_dir / emote_name) + "." + extension
-    with open(location, 'wb') as f:
-        f.write(emote_image)
+
+    file_writer = EmoteFileWriter(emote_name, emote.filename, emote.file)
+    if file_writer.extension_valid:
+        file_writer.save_to_filesystem()
+    else:
+        return {'error_message': 'File extension invalid'}
+
     with request.app['db'].connect() as connection:
-        statement = insert(tables.emotes)\
-            .values(name=emote_name, location=location)
-        connection.execute(statement)
-        connection.commit()
+        emote_storage = EmoteStorage(connection)
+        if emote_storage.emote_exists(emote_name):
+            return {'error_message': 'Emote with this name already exists'}
+        try:
+            emote_storage.add_emote(emote_name, str(file_writer.location))
+        except StorageException as e:
+            file_writer.rollback()
+            raise web.HTTPInternalServerError from e
+
     raise web.HTTPFound(location='/')
 
 
