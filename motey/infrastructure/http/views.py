@@ -45,8 +45,9 @@ async def upload(request: web.Request, config: Config = Config()):
         connection.commit()
     raise web.HTTPFound(location='/')
 
+
 @aiohttp_jinja2.template('login.html')
-async def register(request: web.Request, config: Config = Config()):
+async def register(request: web.Request):
     data = await request.post()
     login = data['login']
     password = data['password']
@@ -64,7 +65,7 @@ async def register(request: web.Request, config: Config = Config()):
 
 
 @aiohttp_jinja2.template('login.html')
-async def login(request: web.Request, config: Config = Config()):
+async def login(request: web.Request):
     data = await request.post()
     login = data['login']
     password = data['password']
