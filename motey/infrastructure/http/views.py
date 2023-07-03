@@ -69,6 +69,11 @@ async def register(request: web.Request):
 
 
 @aiohttp_jinja2.template('login.html')
+async def show_login_page(request: web.Request):
+    pass
+
+
+@aiohttp_jinja2.template('login.html')
 async def login(request: web.Request):
     data = await request.post()
     login = data['login']
