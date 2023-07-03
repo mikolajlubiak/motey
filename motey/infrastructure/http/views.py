@@ -27,8 +27,6 @@ async def index(request: web.Request):
 
 @aiohttp_jinja2.template('index.html')
 async def upload(request: web.Request):
-    # TODO
-    # Check if the user has proper session cookie
     data = await request.post()
     emote = data['emote']
     emote_name = data['emotename']
