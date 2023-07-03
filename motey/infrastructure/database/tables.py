@@ -16,7 +16,6 @@ meta = MetaData()
 users = Table(
     'users', meta,
     Column('id', BIGINT, primary_key=True, autoincrement=True),
-    Column('discord_id', BIGINT, nullable=False, unique=True),
     Column('login', VARCHAR(12), nullable=False, unique=True),
     Column('password', VARCHAR(512), nullable=False),
     Column('created_at', DATETIME, server_default=func.current_timestamp())
