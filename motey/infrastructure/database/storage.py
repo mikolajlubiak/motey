@@ -35,7 +35,7 @@ class EmoteStorage:
             raise StorageException from e
 
     def get_emote_by_name(self, name: str) -> Optional[Emote]:
-        cursor = self._connection.execute(select(tables.emotes.location).where(name=name))
+        cursor = self._connection.execute(select(tables.emotes.c.location).where(name=name))
         record = cursor.fetchone()[0]
         if not record:
             return
