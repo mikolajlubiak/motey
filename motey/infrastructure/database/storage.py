@@ -36,7 +36,7 @@ class EmoteStorage:
 
     def get_emote_by_name(self, name: str) -> Optional[Emote]:
         cursor = self._connection.execute(select(tables.emotes).where(tables.emotes.c.name==name))
-        record = cursor.one()
+        record = cursor.one_or_none()
         if not record:
             return
         return self._convert_record_to_emote(record)
