@@ -30,7 +30,7 @@ class EmoteStorage:
         statement = select(users.c.id)\
             .where(users.c.login==login)
         try:
-            user_id = self._connection.execute(statement)
+            user_id = self._connection.execute(statement).one()
         except IntegrityError as e:
             raise StorageException from e
         statement = insert(emotes) \
