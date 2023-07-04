@@ -44,8 +44,8 @@ async def upload(request: web.Request):
 
     with request.app['db'].connect() as connection:
         statement = select(users.c.id)\
-            .where(users.c.session_id==session_id)
-        user_id = connection.execute(statement).one_or_none()
+            .where(users.c.session_id == session_id)
+        user_id = connection.execute(statement).one_or_none()[0]
         if not user_id:
             return {'error_message': 'Invalid session cookie'}
 
@@ -72,7 +72,7 @@ async def register(request: web.Request):
     hashed_password = hashlib.sha512((password + salt).encode()).hexdigest()
     with request.app['db'].connect() as connection:
         statement = select(users)\
-            .where(users.c.login==login)
+            .where(users.c.login == login)
         user = connection.execute(statement).one_or_none()
         if user:
             return {'error_message': 'User with this login already exists.'}
