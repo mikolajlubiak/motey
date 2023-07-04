@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from sqlalchemy import Connection, insert, select, Row
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, DatabaseError
 
 from motey.infrastructure.database import tables
 from motey.infrastructure.database.tables import emotes
@@ -20,11 +20,12 @@ class EmoteStorage:
     def fetch_all_emotes(self) -> List[Emote]:
         cursor = self._connection.execute(emotes.select())
         records = cursor.all()
-        return (self._convert_record_to_emote(record) for record in records)
+        return [self._convert_record_to_emote(record) for record in records]
 
     def emote_exists(self, name: str) -> bool:
-        cursor = self._connection.execute(emotes.select().where(emotes.c.name==name))
-        record = cursor.one_or_none()
+        cursor = self._connection.execute(select(tables.emotes)
+                                          .where(tables.emotes.c.name == name))
+        record = cursor.fetchone()
         return record is not None
 
     def add_emote(self, name: str, location: str, user_id: str) -> None:
@@ -33,7 +34,7 @@ class EmoteStorage:
         try:
             self._connection.execute(statement)
             self._connection.commit()
-        except IntegrityError as e:
+        except (IntegrityError, DatabaseError) as e:
             raise StorageException from e
 
     def get_emote_by_name(self, name: str) -> Optional[Emote]:
