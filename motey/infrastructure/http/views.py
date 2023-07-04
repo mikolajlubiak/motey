@@ -27,6 +27,7 @@ async def index(request: web.Request):
 
 @aiohttp_jinja2.template('index.html')
 async def upload(request: web.Request):
+    print(request)
     if not 'login' in request:
         return {'error_message': 'Please login'}
     data = await request.post()
