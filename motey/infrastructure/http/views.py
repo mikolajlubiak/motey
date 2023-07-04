@@ -27,6 +27,8 @@ async def index(request: web.Request):
 
 @aiohttp_jinja2.template('index.html')
 async def upload(request: web.Request):
+    if not request['login']:
+        return {'error_message': 'Please login'}
     data = await request.post()
     emote = data['emote']
     emote_name = data['emotename']
@@ -41,10 +43,12 @@ async def upload(request: web.Request):
 
     with request.app['db'].connect() as connection:
         emote_storage = EmoteStorage(connection)
+        login = request['login']
+        
         if emote_storage.emote_exists(emote_name):
             return {'error_message': 'Emote with this name already exists'}
         try:
-            emote_storage.add_emote(emote_name, str(file_writer.location))
+            emote_storage.add_emote(emote_name, str(file_writer.location), login)
         except StorageException as e:
             file_writer.rollback()
             raise web.HTTPInternalServerError from e

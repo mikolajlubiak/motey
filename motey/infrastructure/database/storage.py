@@ -4,6 +4,7 @@ from sqlalchemy import Connection, insert, select, Row
 from sqlalchemy.exc import IntegrityError
 
 from motey.infrastructure.database import tables
+from motey.infrastructure.database.tables import emotes
 from motey.domain.read_models import Emote
 
 
@@ -16,18 +17,24 @@ class EmoteStorage:
         self._connection = connection
 
     def fetch_all_emotes(self) -> List[Emote]:
-        cursor = self._connection.execute(tables.emotes.select())
-        records = cursor.fetchall()
-        return [self._convert_record_to_emote(record) for record in records]
+        cursor = self._connection.execute(emotes.select())
+        records = cursor.all()
+        return (self._convert_record_to_emote(record) for record in records)
 
     def emote_exists(self, name: str) -> bool:
-        cursor = self._connection.execute(tables.emotes.select().where(name==name))
-        record = cursor.fetchone()
+        cursor = self._connection.execute(emotes.select().where(emotes.c.name==name))
+        record = cursor.one_or_none()
         return record is not None
 
-    def add_emote(self, name: str, location: str) -> None:
-        statement = insert(tables.emotes) \
-            .values(name=name, location=location)
+    def add_emote(self, name: str, location: str, login: str) -> None:
+        statement = select(users.c.id)\
+            .where(users.c.login==login)
+        try:
+            user_id = self._connection.execute(statement)
+        except IntegrityError as e:
+            raise StorageException from e
+        statement = insert(emotes) \
+            .values(name=name, location=location, user_id=user_id)
         try:
             self._connection.execute(statement)
             self._connection.commit()
@@ -35,14 +42,14 @@ class EmoteStorage:
             raise StorageException from e
 
     def get_emote_by_name(self, name: str) -> Optional[Emote]:
-        cursor = self._connection.execute(select(tables.emotes).where(tables.emotes.c.name==name))
+        cursor = self._connection.execute(select(emotes).where(emotes.c.name==name))
         record = cursor.one_or_none()
         if not record:
             return
         return self._convert_record_to_emote(record)
 
     def increase_emote_usage_count(self, emote_id: int) -> None:
-        statement = tables.emotes.update().where(id==emote_id).values(times_used=tables.emotes.c.times_used + 1)
+        statement = emotes.update().where(emotes.c.id==emote_id).values(times_used=emotes.c.times_used + 1)
         self._connection.execute(statement)
         self._connection.commit()
 
