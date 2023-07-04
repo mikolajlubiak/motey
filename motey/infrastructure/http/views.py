@@ -110,7 +110,8 @@ async def login(request: web.Request):
         )
         connection.execute(statement)
         connection.commit()
-
+        
+        # AFTER A LOT OF DEBUGGING I KNOW THAT THE ISSUE IS HERE. FOR SOME REASON THE COOKIE ISNT SAVED.
         response = web.Response(text='Logged in')
         response.set_cookie(name='session_id', value=session_id, path='/', samesite='None')
         return response
