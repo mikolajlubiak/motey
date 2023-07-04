@@ -41,7 +41,7 @@ async def check_session_middleware(app, handler):
                 .where(users.c.session_id==session_id)
             user = connection.execute(statement).one_or_none()
             if user:
-                request['login'] = user.login
+                request['login'] = user[4]
         return await handler(request)
     return middleware
 
