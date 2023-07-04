@@ -38,8 +38,8 @@ async def check_session_middleware(app, handler):
         session_id = request.cookies.get('session_id')
         if session_id:
             statement = select(users)\
-                .where(session_id==session_id)
-            user = connection.scalars(statement).all()
+                .where(users.c.session_id==session_id)
+            user = connection.execute(statement).one_or_none()
             if user:
                 request['login'] = user.login
         return await handler(request)
