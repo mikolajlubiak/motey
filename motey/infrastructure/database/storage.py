@@ -5,6 +5,7 @@ from sqlalchemy.exc import IntegrityError
 
 from motey.infrastructure.database import tables
 from motey.infrastructure.database.tables import emotes
+from motey.infrastructure.database.tables import users
 from motey.domain.read_models import Emote
 
 
