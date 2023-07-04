@@ -5,6 +5,7 @@ from sqlalchemy.exc import IntegrityError
 
 from motey.infrastructure.database import tables
 from motey.infrastructure.database.tables import emotes
+from motey.infrastructure.database.tables import users
 from motey.domain.read_models import Emote
 
 
@@ -26,13 +27,7 @@ class EmoteStorage:
         record = cursor.one_or_none()
         return record is not None
 
-    def add_emote(self, name: str, location: str, login: str) -> None:
-        statement = select(users.c.id)\
-            .where(users.c.login==login)
-        try:
-            user_id = self._connection.execute(statement).one()
-        except IntegrityError as e:
-            raise StorageException from e
+    def add_emote(self, name: str, location: str, user_id: str) -> None:
         statement = insert(emotes) \
             .values(name=name, location=location, user_id=user_id)
         try:

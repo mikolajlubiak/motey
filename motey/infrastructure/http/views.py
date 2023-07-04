@@ -43,17 +43,17 @@ async def upload(request: web.Request):
         return {'error_message': 'File extension invalid'}
 
     with request.app['db'].connect() as connection:
-        statement = select(users.c.login)\
+        statement = select(users.c.id)\
             .where(users.c.session_id==session_id)
-        login = connection.execute(statement).one_or_none()
-        if not login:
+        user_id = connection.execute(statement).one_or_none()
+        if not user_id:
             return {'error_message': 'Invalid session cookie'}
 
         emote_storage = EmoteStorage(connection)
         if emote_storage.emote_exists(emote_name):
             return {'error_message': 'Emote with this name already exists'}
         try:
-            emote_storage.add_emote(emote_name, str(file_writer.location), login)
+            emote_storage.add_emote(emote_name, str(file_writer.location), user_id)
         except StorageException as e:
             file_writer.rollback()
             raise web.HTTPInternalServerError from e
@@ -113,7 +113,6 @@ async def login(request: web.Request):
         
         # AFTER A LOT OF DEBUGGING I KNOW THAT THE ISSUE IS HERE. FOR SOME REASON THE COOKIE ISNT SAVED.
         response = web.Response(text='Logged in')
-        response.set_cookie(name='session_id', value=session_id, path='/', samesite='None')
-        return response
+        response.set_cookie(name='session_id', value=session_id, path='/', httponly=True, max_age=31536000)
 
     raise web.HTTPFound(location='/')
