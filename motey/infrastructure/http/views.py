@@ -27,7 +27,8 @@ async def index(request: web.Request):
 
 @aiohttp_jinja2.template('index.html')
 async def upload(request: web.Request):
-    if not 'login' in request:
+    session_id = request.cookies.get('session_id')
+    if not session_id:
         return {'error_message': 'Please login'}
     data = await request.post()
     emote = data['emote']
@@ -35,16 +36,14 @@ async def upload(request: web.Request):
     if not emote_name:
         return {'error_message': 'Please enter emote name'}
 
-    file_writer = EmoteFileWriter(emote_name, emote.filename, emote.file)
-    if file_writer.extension_valid:
-        file_writer.save_to_filesystem()
-    else:
-        return {'error_message': 'File extension invalid'}
-
     with request.app['db'].connect() as connection:
+        statement = select(users.c.login)\
+            .where(users.c.session_id==session_id)
+        login = connection.execute(statement).one_or_none()
+        if not login:
+            return {'error_message': 'Invalid session cookie'}
+
         emote_storage = EmoteStorage(connection)
-        login = request['login']
-        
         if emote_storage.emote_exists(emote_name):
             return {'error_message': 'Emote with this name already exists'}
         try:
@@ -52,6 +51,13 @@ async def upload(request: web.Request):
         except StorageException as e:
             file_writer.rollback()
             raise web.HTTPInternalServerError from e
+
+    file_writer = EmoteFileWriter(emote_name, emote.filename, emote.file)
+    if file_writer.extension_valid:
+        file_writer.save_to_filesystem()
+    else:
+        return {'error_message': 'File extension invalid'}
+
 
     raise web.HTTPFound(location='/')
 
@@ -106,6 +112,7 @@ async def login(request: web.Request):
         connection.execute(statement)
         connection.commit()
 
+        # AFTER A LOT OF DEBUGGING I KNOW THAT THE ISSUE IS HERE. FOR SOME REASON THE COOKIE ISNT SAVED.
         response = web.Response(text='Login successful')
         response.set_cookie('session_id', session_id, httponly=True)
 
