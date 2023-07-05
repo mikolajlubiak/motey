@@ -3,8 +3,8 @@ from sqlalchemy import (
     Table,
     Column,
     BIGINT,
-    DATETIME,
     VARCHAR,
+    BOOL,
     func,
     ForeignKey
 )
@@ -15,23 +15,27 @@ meta = MetaData()
 
 users = Table(
     'users', meta,
-    Column('id', BIGINT, primary_key=True, autoincrement=True),
-    Column('login', VARCHAR(32), nullable=False, unique=True),
-    Column('hashed_password', VARCHAR(128), nullable=False),
-    Column('salt', VARCHAR(32), nullable=False),
-    Column('session_id', VARCHAR(32), unique=True),
-    Column('created_at', DATETIME, server_default=func.current_timestamp())
+    Column('id', BIGINT, primary_key=True, nullable=False),
+    Column('discord_id', BIGINT, nullable=False),
+    Column('server_id', BIGINT, ForeignKey('servers.id'), nullable=False),
+    Column('can_upload', BOOL, nullable=False),
+    Column('replace', BOOL, nullable=False),
+)
+
+servers = Table(
+    'servers', meta,
+    Column('id', BIGINT, primary_key=True, nullable=False),
+    Column('guild', BIGINT, nullable=False, unique=True),
 )
 
 
 emotes = Table(
     'emotes', meta,
     Column('id', BIGINT, primary_key=True, autoincrement=True),
+    Column('server_id', BIGINT, ForeignKey('servers.id'), nullable=False),
+    Column('discord_id', BIGINT, ForeignKey('users.discord_id'))
     Column('name', VARCHAR(32), nullable=False, unique=True,),
-    Column('location', VARCHAR(64), nullable=False, unique=True),
-    Column('times_used', BIGINT, default=0),
-    Column('created_at', DATETIME, server_default=func.current_timestamp()),
-    Column('user_id', BIGINT, ForeignKey('users.id'))
+    Column('path', VARCHAR(64), nullable=False, unique=True),
 )
 
 
