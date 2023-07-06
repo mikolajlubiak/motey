@@ -1,3 +1,4 @@
+import aiohttp
 from aiohttp import web
 import aiohttp_jinja2
 import aiohttp_session
@@ -72,29 +73,34 @@ async def login(request: web.Request):
 
 @routes.get('/init_oauth')
 async def init_oauth(request: web.Request):
-    raise web.HTTPFound(location=config.auth_start_url)
+    location = Config.auth_start_url
+    raise web.HTTPFound(location=location)
 
 @routes.get('/process_oauth')
 async def process_oauth(request: web.Request):
-    code = request.match_info.get("code", "")
+    code = request.rel_url.query.get("code", "")
     if not code:
         return {'error_message': 'There is no oauth code'}
-    else:
-        payload = {
-                "code":code,
-                "client_id":Config.client_id,
-                "client_secret":Config.client_secret,
-                "grant_type":"authorization_code",
-                "redirect_url":Config.redirect_url,
-                "scope":"identify%20guilds"
-            }
-        #response = await request("url", payload)
-        #print(response)
-        
-
-async def request(url, data):
-    out = []
+    payload = {
+            "code":code,
+            "client_id":Config.client_id,
+            "client_secret":Config.client_secret,
+            "grant_type":"authorization_code",
+            "redirect_uri":Config.redirect_url,
+            "scope":"identify%20guilds"
+        }
     async with aiohttp.ClientSession() as session:
-        async with session.post(url, data=data) as resp:
-            out.append(resp.text())
-    return out
+        async with session.post("https://discord.com/api/oauth2/token", data=payload) as response:
+            authtoken_data = await response.json()
+    access_token = authtoken_data["access_token"]
+    header = {
+    "Authorization": f"Bearer {access_token}",
+    "Content-Type": "application/x-www-form-urlencoded"
+    }  
+    async with aiohttp.ClientSession(headers=header) as session:
+        async with session.get("https://discord.com/api/users/@me") as response:
+            userdata = await response.json()
+    async with aiohttp.ClientSession(headers=header) as session:
+        async with session.get("https://discord.com/api/users/@me/guilds") as response:
+            guilds = await response.json()
+    raise web.HTTPFound(location='/')
