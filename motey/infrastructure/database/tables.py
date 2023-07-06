@@ -4,7 +4,7 @@ from sqlalchemy import (
         Column,
         BIGINT,
         VARCHAR,
-        BOOL,
+        Boolean,
         func,
         ForeignKey
         )
@@ -18,8 +18,8 @@ users = Table(
         Column('id', BIGINT, primary_key=True, nullable=False),
         Column('discord_id', BIGINT, nullable=False),
         Column('server_id', BIGINT, ForeignKey('servers.id'), nullable=False),
-        Column('can_upload', BOOL, nullable=False),
-        Column('replace', BOOL, nullable=False),
+        Column('can_upload', Boolean, nullable=False),
+        Column('replace', Boolean, nullable=False),
         )
 
 servers = Table(
