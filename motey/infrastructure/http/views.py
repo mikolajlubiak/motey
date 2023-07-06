@@ -90,7 +90,6 @@ async def process_oauth(request: web.Request):
             }
         #response = await request("url", payload)
         #print(response)
-        
 
 async def request(url, data):
     out = []
