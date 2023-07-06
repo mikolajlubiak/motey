@@ -33,7 +33,7 @@ emotes = Table(
         'emotes', meta,
         Column('id', BIGINT, primary_key=True, autoincrement=True),
         Column('server_id', BIGINT, ForeignKey('servers.id'), nullable=False),
-        Column('discord_id', BIGINT, ForeignKey('users.discord_id'))
+        Column('discord_id', BIGINT, ForeignKey('users.discord_id')),
         Column('name', VARCHAR(32), nullable=False, unique=True,),
         Column('path', VARCHAR(64), nullable=False, unique=True),
         )
