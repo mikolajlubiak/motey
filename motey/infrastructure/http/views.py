@@ -70,13 +70,9 @@ async def login(request: web.Request):
     session["id"] = "discord id"
     raise web.HTTPFound(location='/')
 
-@routes.get('/init_oauth')
-async def init_oauth(request: web.Request):
-    raise web.HTTPFound(location=config.auth_start_url)
-
 @routes.get('/process_oauth')
 async def process_oauth(request: web.Request):
-    code = request.match_info.get("code", "")
+    code = request.rel_url.query.get("code", "")
     if not code:
         return {'error_message': 'There is no oauth code'}
     else:
