@@ -7,9 +7,6 @@ from sqlalchemy import insert
 from sqlalchemy import select
 from sqlalchemy import update
 
-import hashlib
-import secrets
-
 from motey.infrastructure.database import tables
 from motey.infrastructure.database.tables import users
 from motey.infrastructure.database.storage import EmoteStorage, StorageException
@@ -21,8 +18,8 @@ routes = web.RouteTableDef()
 
 @aiohttp_jinja2.template('list.html')
 async def list_emotes(request: web.Request):
-    with request.app['db'].connect() as connection:
-        return {"emotes": EmoteStorage(connection).fetch_all_emotes()}
+    with Session(request.app['db']) as session:
+        return EmoteStorage(session).fetch_all_emotes()
 
 
 @aiohttp_jinja2.template('index.html')

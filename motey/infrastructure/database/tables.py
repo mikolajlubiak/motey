@@ -1,42 +1,33 @@
 from sqlalchemy import (
-        MetaData,
-        Table,
         Column,
-        BIGINT,
-        VARCHAR,
+        Integer,
+        String,
         Boolean,
-        func,
         ForeignKey
         )
+from sqlalchemy.orm import (
+        DeclarativeBase,
+        Mapped,
+        mapped_column,
+        relationship
+)
 
+class Base(DeclarativeBase):
+        pass
 
-meta = MetaData()
+class User(Base):
+        __tablename__ = "users"
+        
+        id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+        discord_id: Mapped[int] = mapped_column(Integer(18), nullable=False, unique=True)
+        can_replace: Mapped[bool] = mapped_column(Boolean, nullable=False)
+        replace: Mapped[bool] = mapped_column(Boolean, nullable=False)
+        banned: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
+class Emote(Base):
+        __tablename__ = "emotes"
 
-users = Table(
-        'users', meta,
-        Column('id', BIGINT, primary_key=True, nullable=False),
-        Column('discord_id', BIGINT, nullable=False),
-        Column('server_id', BIGINT, ForeignKey('servers.id'), nullable=False),
-        Column('can_upload', Boolean, nullable=False),
-        Column('replace', Boolean, nullable=False),
-        )
-
-servers = Table(
-        'servers', meta,
-        Column('id', BIGINT, primary_key=True, nullable=False),
-        Column('guild', BIGINT, nullable=False, unique=True),
-        )
-
-
-emotes = Table(
-        'emotes', meta,
-        Column('id', BIGINT, primary_key=True, autoincrement=True),
-        Column('server_id', BIGINT, ForeignKey('servers.id'), nullable=False),
-        Column('user_id', BIGINT, ForeignKey('users.id')),
-        Column('name', VARCHAR(32), nullable=False, unique=True),
-        Column('path', VARCHAR(64), nullable=False, unique=True),
-        )
-
-
-all_tables = [users, emotes, servers]
+        id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+        author: Mapped["User"] = relationship("User")
+        name: Mapped[str] = mapped_column(String(32), nullable=False, unique=True)
+        path: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
