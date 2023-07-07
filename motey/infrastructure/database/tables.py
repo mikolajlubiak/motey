@@ -1,6 +1,7 @@
 from sqlalchemy import (
         Column,
         Integer,
+        BigInteger,
         String,
         Boolean,
         ForeignKey
@@ -19,7 +20,7 @@ class User(Base):
         __tablename__ = "users"
         
         id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-        discord_id: Mapped[int] = mapped_column(Integer(18), nullable=False, unique=True)
+        discord_id: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
         can_replace: Mapped[bool] = mapped_column(Boolean, nullable=False)
         replace: Mapped[bool] = mapped_column(Boolean, nullable=False)
         banned: Mapped[bool] = mapped_column(Boolean, nullable=False)
