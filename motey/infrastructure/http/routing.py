@@ -10,4 +10,4 @@ def setup_routes(app: Application, config: Config = Config()) -> None:
     app.router.add_get('/', index)
     app.router.add_post('/upload', upload)
     app.router.add_get('/process_oauth', process_oauth)
-    app.router.add_get('/init_oauth', init_oauth)
+    app.router.add_get('/init_oauth', config.auth_start_url)
