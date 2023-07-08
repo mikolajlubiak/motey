@@ -1,6 +1,6 @@
 from aiohttp.web import Application
 
-from motey.infrastructure.http.views import list_emotes, index, upload, login, init_oauth, process_oauth
+from motey.infrastructure.http.views import list_emotes, index, upload, init_oauth, process_oauth
 from motey.infrastructure.config import Config
 
 
