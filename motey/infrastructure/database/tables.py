@@ -12,16 +12,26 @@ from sqlalchemy.orm import (
         mapped_column,
         relationship
 )
+from typing import List, Optional
 
 class Base(DeclarativeBase):
         pass
+    
+class Server(Base):
+        __tablename__ = "servers"
+        
+        id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+        guild: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
+        server_users: Mapped[List["User"]] = relationship(back_populates="user_servers")
+        replace: Mapped[bool] = mapped_column(Boolean, nullable=False)
+        banned: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
 class User(Base):
         __tablename__ = "users"
         
         id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
         discord_id: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
-        can_replace: Mapped[bool] = mapped_column(Boolean, nullable=False)
+        user_servers: Mapped[List["Server"]] = relationship(back_populates="server_users")
         replace: Mapped[bool] = mapped_column(Boolean, nullable=False)
         banned: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
