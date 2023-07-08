@@ -32,8 +32,8 @@ class EmoteFileWriter:
         if not self.extension_valid:
             raise InvalidFileExtension
         file_content = self._reader.read()
-        location = self._build_file_location()
-        with open(location, 'wb') as output_file:
+        path = self._build_file_path()
+        with open(path, 'wb') as output_file:
             output_file.write(file_content)
 
     def rollback(self) -> None:
