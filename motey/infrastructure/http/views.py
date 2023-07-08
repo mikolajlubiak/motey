@@ -45,10 +45,6 @@ async def upload(request: web.Request):
 
     raise web.HTTPFound(location='/')
 
-@routes.get('/init_oauth')
-async def init_oauth(request: web.Request):
-    url = Config.auth_start_url
-    raise web.HTTPFound(location=url)
 
 @routes.get('/process_oauth')
 async def process_oauth(request: web.Request):
@@ -56,8 +52,8 @@ async def process_oauth(request: web.Request):
     if not code:
         return {'error_message': 'There is no oauth code'}
     payload = {
-            "code": code,
-            "client_id": Config.client_id,
+            "code": str(code),
+            "client_id": str(Config.client_id),
             "client_secret": Config.client_secret,
             "grant_type": "authorization_code",
             "redirect_uri": Config.redirect_url,
@@ -74,6 +70,8 @@ async def process_oauth(request: web.Request):
     async with aiohttp.ClientSession(headers=header) as session:
         async with session.get("https://discord.com/api/users/@me") as response:
             user_data = await response.json()
+            session = await aiohttp_session.get_session(request)
+            session['discord_id'] = user_data['id']
     async with aiohttp.ClientSession(headers=header) as session:
         async with session.get("https://discord.com/api/users/@me/guilds") as response:
             guilds = await response.json()
