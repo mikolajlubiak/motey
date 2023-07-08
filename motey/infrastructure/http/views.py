@@ -4,6 +4,7 @@ import aiohttp_jinja2
 import aiohttp_session
 
 from sqlalchemy import insert, select, update
+from sqlalchemy.orm import Session
 
 from motey.infrastructure.database.storage import EmoteStorage
 from motey.infrastructure.filesystem import EmoteFileWriter
