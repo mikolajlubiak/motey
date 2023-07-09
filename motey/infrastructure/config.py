@@ -29,3 +29,6 @@ class Config:
     client_id = os.getenv('CLIENT_ID')
     redirect_url = os.getenv('REDIRECT_URL')
     auth_start_url = os.getenv('AUTH_START_URL')
+
+    #BOT
+    token = os.getenv('BOT_TOKEN')
