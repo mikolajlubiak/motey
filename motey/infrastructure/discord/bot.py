@@ -5,7 +5,6 @@ from motey.infrastructure.database.engine import get_db
 from sqlalchemy import insert, select, update, exists
 from sqlalchemy.orm import Session
 from motey.infrastructure.database.tables import User, Server, Emote
-from motey.infrastructure.database.engine import get_db
 from motey.infrastructure.config import Config
 
 class MoteyClient(nextcord.Client):
@@ -38,7 +37,6 @@ async def toggle_replacing(interaction: nextcord.Interaction):
     with Session(get_db()) as db_session:
         stmt = select(User).where(User.discord_id==interaction.user.id)
         author = db_session.scalars(stmt).one()
-    with Session(get_db()) as db_session:
         stmt = (
         update(User)
         .where(User.discord_id == interaction.user.id)
