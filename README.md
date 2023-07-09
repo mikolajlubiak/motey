@@ -18,6 +18,11 @@ Start database with docker compose:
 docker-compose up
 ```
 
+Set FOREIGN_KEY_CHECKS to 0 (need because otherwise the database wouldn't want to drop tables because of foreign keys):
+```shell
+./foreign_key_checks.sh
+```
+
 Initialize database (note: if "motey" database already exists, this will drop all existing tables):
 ```shell
 ./init_database.sh

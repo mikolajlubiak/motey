@@ -1,23 +1,23 @@
+import aiohttp
 from aiohttp import web
 import aiohttp_jinja2
+import aiohttp_session
 
-from sqlalchemy import insert
-from sqlalchemy import select
-from sqlalchemy import update
+from sqlalchemy import insert, select, update, exists
+from sqlalchemy.orm import Session
 
-import hashlib
-import secrets
-
-from motey.infrastructure.database import tables
-from motey.infrastructure.database.tables import users
-from motey.infrastructure.database.storage import EmoteStorage, StorageException
+from motey.infrastructure.database.storage import EmoteStorage
 from motey.infrastructure.filesystem import EmoteFileWriter
+from motey.infrastructure.database.tables import User, Server, Emote
 
+from motey.infrastructure.config import Config
+
+routes = web.RouteTableDef()
 
 @aiohttp_jinja2.template('list.html')
 async def list_emotes(request: web.Request):
-    with request.app['db'].connect() as connection:
-        return {"emotes": EmoteStorage(connection).fetch_all_emotes()}
+    with Session(request.app['db']) as db_session:
+        return {"emotes": EmoteStorage(db_session).fetch_all_emotes()}
 
 
 @aiohttp_jinja2.template('index.html')
@@ -27,12 +27,10 @@ async def index(request: web.Request):
 
 @aiohttp_jinja2.template('index.html')
 async def upload(request: web.Request):
-    session_id = request.cookies.get('session_id')
-    if not session_id:
-        return {'error_message': 'Please login'}
     data = await request.post()
     emote = data['emote']
     emote_name = data['emotename']
+    session = await aiohttp_session.get_session(request)
     if not emote_name:
         return {'error_message': 'Please enter emote name'}
 
@@ -42,78 +40,49 @@ async def upload(request: web.Request):
     else:
         return {'error_message': 'File extension invalid'}
 
-    with request.app['db'].connect() as connection:
-        statement = select(users.c.id)\
-            .where(users.c.session_id == session_id)
-        user_id = connection.execute(statement).one_or_none()[0]
-        if not user_id:
-            return {'error_message': 'Invalid session cookie'}
-
-        emote_storage = EmoteStorage(connection)
+    with Session(request.app['db']) as db_session:
+        stmt = select(User).where(User.discord_id==session['discord_id'])
+        author = db_session.scalars(stmt).one()
+        emote_storage = EmoteStorage(db_session)
         if emote_storage.emote_exists(emote_name):
             return {'error_message': 'Emote with this name already exists'}
-        try:
-            emote_storage.add_emote(emote_name, str(file_writer.location), user_id)
-        except StorageException as e:
-            file_writer.rollback()
-            raise web.HTTPInternalServerError from e
+        emote_storage.add_emote(emote_name, str(file_writer.path), author)
 
     raise web.HTTPFound(location='/')
 
 
-@aiohttp_jinja2.template('login.html')
-async def register(request: web.Request):
-    data = await request.post()
-    login = data['login']
-    password = data['password']
-    if not login or not password:
-        return {'error_message': 'Please enter login and password.'}
-    salt = secrets.token_hex(16)
-    hashed_password = hashlib.sha512((password + salt).encode()).hexdigest()
-    with request.app['db'].connect() as connection:
-        statement = select(users)\
-            .where(users.c.login == login)
-        user = connection.execute(statement).one_or_none()
-        if user:
-            return {'error_message': 'User with this login already exists.'}
-
-        statement = insert(tables.users)\
-            .values(login=login, hashed_password=hashed_password, salt=salt)
-        connection.execute(statement)
-        connection.commit()
-    raise web.HTTPFound(location='/')
-
-
-@aiohttp_jinja2.template('login.html')
-async def show_login_page(request: web.Request):
-    pass
-
-
-@aiohttp_jinja2.template('login.html')
-async def login(request: web.Request):
-    data = await request.post()
-    login = data['login']
-    password = data['password']
-    if not login or not password:
-        return {'error_message': 'Please enter login and password.'}
-    with request.app['db'].connect() as connection:
-        statement = select(users)\
-            .where(users.c.login==login)
-        user = connection.execute(statement).one_or_none()
-        if not user or user[2] != hashlib.sha512((password + user[3]).encode()).hexdigest():
-            return {'error_message': 'Invalid login data.'}
-        session_id = secrets.token_hex(16)
-        statement = (
-            update(users).
-            where(users.c.login==login).
-            values(session_id=session_id)
-        )
-        connection.execute(statement)
-        connection.commit()
-        
-        # AFTER A LOT OF DEBUGGING I KNOW THAT THE ISSUE IS HERE. FOR SOME REASON THE COOKIE ISNT SAVED.
-        response = web.HTTPFound(location='/')
-        response.set_cookie(name='session_id', value=session_id, path='/', httponly=True, max_age=31536000)
-        raise response
-
+@routes.get('/process_oauth')
+async def process_oauth(request: web.Request):
+    code = request.rel_url.query.get("code", "")
+    session = await aiohttp_session.get_session(request)
+    if not code:
+        return {'error_message': 'There is no oauth code'}
+    payload = {
+            "code": str(code),
+            "client_id": str(Config.client_id),
+            "client_secret": Config.client_secret,
+            "grant_type": "authorization_code",
+            "redirect_uri": Config.redirect_url,
+            "scope": "identify%20guilds"
+        }
+    async with aiohttp.ClientSession() as client_session:
+        async with client_session.post("https://discord.com/api/oauth2/token", data=payload) as response:
+            auth_token_data = await response.json()
+    access_token = auth_token_data["access_token"]
+    header = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/x-www-form-urlencoded"
+    }  
+    async with aiohttp.ClientSession(headers=header) as client_session:
+        async with client_session.get("https://discord.com/api/users/@me") as response:
+            user_data = await response.json()
+            session['discord_id'] = user_data['id']
+    async with aiohttp.ClientSession(headers=header) as client_session:
+        async with client_session.get("https://discord.com/api/users/@me/guilds") as response:
+            guilds = await response.json()
+    with Session(request.app['db']) as db_session:
+        if not db_session.query(exists().where(User.discord_id == session['discord_id'])).scalar():
+            user = User(discord_id=session['discord_id'])
+            db_session.add(user)
+            db_session.commit()
     raise web.HTTPFound(location='/')

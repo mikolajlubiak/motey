@@ -25,22 +25,22 @@ class EmoteFileWriter:
         return extension in self.VALID_EXTENSIONS
 
     @property
-    def location(self) -> Path:
-        return self._build_file_location()
+    def path(self) -> Path:
+        return self._build_file_path()
 
     def save_to_filesystem(self) -> None:
         if not self.extension_valid:
             raise InvalidFileExtension
         file_content = self._reader.read()
-        location = self._build_file_location()
-        with open(location, 'wb') as output_file:
+        path = self._build_file_path()
+        with open(path, 'wb') as output_file:
             output_file.write(file_content)
 
     def rollback(self) -> None:
-        location = self._build_file_location()
-        os.remove(location)
+        path = self._build_file_location()
+        os.remove(path)
 
-    def _build_file_location(self) -> Path:
+    def _build_file_path(self) -> Path:
         extension = self._get_file_extension()
         return self._emotes_dir / f'{self._emote_name}.{extension}'
 

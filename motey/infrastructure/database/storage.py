@@ -1,60 +1,30 @@
-from typing import List, Optional
+from typing import Optional, List
 
-from sqlalchemy import Connection, insert, select, Row
-from sqlalchemy.exc import IntegrityError, DatabaseError
+from sqlalchemy import select, exists
+from sqlalchemy.orm import Session
 
-from motey.infrastructure.database import tables
-from motey.infrastructure.database.tables import emotes
-from motey.infrastructure.database.tables import users
-from motey.domain.read_models import Emote
-
-
-class StorageException(Exception):
-    pass
+from motey.infrastructure.database.tables import Emote
+from motey.infrastructure.database.tables import User
 
 
 class EmoteStorage:
-    def __init__(self, connection: Connection):
-        self._connection = connection
+    def __init__(self, session: Session):
+        self._session = session
 
     def fetch_all_emotes(self) -> List[Emote]:
-        cursor = self._connection.execute(emotes.select())
-        records = cursor.all()
-        return [self._convert_record_to_emote(record) for record in records]
+        return self._session.scalars(select(Emote)).all()
 
     def emote_exists(self, name: str) -> bool:
-        cursor = self._connection.execute(select(tables.emotes)
-                                          .where(tables.emotes.c.name == name))
-        record = cursor.fetchone()
-        return record is not None
+        return self._session.query(exists().where(Emote.name == name)).scalar()
 
-    def add_emote(self, name: str, location: str, user_id: str) -> None:
-        statement = insert(emotes) \
-            .values(name=name, location=location, user_id=user_id)
-        try:
-            self._connection.execute(statement)
-            self._connection.commit()
-        except (IntegrityError, DatabaseError) as e:
-            raise StorageException from e
+    def add_emote(self, name: str, path: str, author: User) -> None:
+        emote = Emote(name=name, path=path, author=author)
+        self._session.add(emote)
+        self._session.commit()
 
     def get_emote_by_name(self, name: str) -> Optional[Emote]:
-        cursor = self._connection.execute(select(emotes).where(emotes.c.name==name))
-        record = cursor.one_or_none()
-        if not record:
-            return
-        return self._convert_record_to_emote(record)
-
-    def increase_emote_usage_count(self, emote_id: int) -> None:
-        statement = emotes.update().where(emotes.c.id==emote_id).values(times_used=emotes.c.times_used + 1)
-        self._connection.execute(statement)
-        self._connection.commit()
-
-    @staticmethod
-    def _convert_record_to_emote(record: Row) -> Emote:
-        return Emote(
-            id=record[0],
-            name=record[1],
-            location=record[2],
-            times_used=record[3]
-        )
-
+        stmt = select(Emote).where(Emote.name == name)
+        try:
+            return self._session.scalars(stmt).one()
+        except:
+            return None

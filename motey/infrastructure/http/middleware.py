@@ -1,5 +1,7 @@
 import aiohttp_jinja2
 from aiohttp import web
+import aiohttp_session
+from motey.infrastructure.config import Config
 
 
 def _create_error_middleware(overrides):
@@ -27,6 +29,16 @@ async def handle_404(request):
 async def handle_500(request):
     return aiohttp_jinja2.render_template('500.html', request, {}, status=500)
 
+@web.middleware
+async def check_login(request, handler):
+    if request.path == '/upload':
+        session = await aiohttp_session.get_session(request)
+        discord_id = session.get("discord_id")
+        if not discord_id:
+            url = Config.auth_start_url
+            raise web.HTTPFound(location=url)
+    return await handler(request)
+
 
 def setup_middlewares(app: web.Application) -> None:
     error_middleware = _create_error_middleware({
@@ -34,3 +46,4 @@ def setup_middlewares(app: web.Application) -> None:
         500: handle_500
     })
     app.middlewares.append(error_middleware)
+    app.middlewares.append(check_login)
