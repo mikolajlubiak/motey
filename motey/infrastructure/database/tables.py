@@ -18,11 +18,25 @@ from typing import List, Optional
 class Base(DeclarativeBase):
         pass
 
-association_table = Table(
-    "association_table",
+users_servers_association_table = Table(
+    "users_servers_association_table",
     Base.metadata,
     Column("server_id", ForeignKey("servers.id"), primary_key=True),
     Column("user_id", ForeignKey("users.id"), primary_key=True),
+)
+
+admins_servers_association_table = Table(
+    "admins_servers_association_table",
+    Base.metadata,
+    Column("server_id", ForeignKey("servers.id"), primary_key=True),
+    Column("user_id", ForeignKey("users.id"), primary_key=True),
+)
+
+emotes_servers_association_table = Table(
+    "emotes_servers_association_table",
+    Base.metadata,
+    Column("server_id", ForeignKey("servers.id"), primary_key=True),
+    Column("emote_id", ForeignKey("emotes.id"), primary_key=True),
 )
     
 class Server(Base):
@@ -30,7 +44,9 @@ class Server(Base):
         
         id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
         guild: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
-        server_users: Mapped[List["User"]] = relationship(back_populates="user_servers", secondary=association_table)
+        server_users: Mapped[List["User"]] = relationship(back_populates="user_servers", secondary=users_servers_association_table)
+        server_admins: Mapped[List["User"]] = relationship(back_populates="admin_servers", secondary=admins_servers_association_table)
+        server_emotes: Mapped[List["Emote"]] = relationship(back_populates="emote_servers", secondary=emotes_servers_association_table)
         replace: Mapped[bool] = mapped_column(Boolean, nullable=False)
         banned: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
@@ -39,7 +55,8 @@ class User(Base):
         
         id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
         discord_id: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
-        user_servers: Mapped[List["Server"]] = relationship(back_populates="server_users", secondary=association_table)
+        user_servers: Mapped[List["Server"]] = relationship(back_populates="server_users", secondary=users_servers_association_table)
+        admin_servers: Mapped[List["Server"]] = relationship(back_populates="server_admins", secondary=admins_servers_association_table)
         user_emotes: Mapped[List["Emote"]] = relationship(back_populates="author")
         replace: Mapped[bool] = mapped_column(Boolean, nullable=False)
         banned: Mapped[bool] = mapped_column(Boolean, nullable=False)
@@ -50,5 +67,6 @@ class Emote(Base):
         id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
         author_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
         author: Mapped["User"] = relationship(back_populates="user_emotes")
+        emote_servers: Mapped[List["Server"]] = relationship(back_populates="server_emotes", secondary=emotes_servers_association_table)
         name: Mapped[str] = mapped_column(String(32), nullable=False, unique=True)
         path: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
