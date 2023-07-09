@@ -46,7 +46,7 @@ async def toggle_replacing(interaction: nextcord.Interaction):
         author.replace = not author.replace
         db_session.execute(stmt)
         db_session.commit()
-    await interaction.response.send_message(f"{author.replace}")
+    await interaction.response.send_message(f"Replacing messages with emotes is now set to: {author.replace}")
 
 if __name__ == '__main__':
     client.run(Config.token)
