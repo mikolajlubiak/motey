@@ -3,7 +3,7 @@ from aiohttp import web
 import aiohttp_jinja2
 import aiohttp_session
 
-from sqlalchemy import insert, select, update
+from sqlalchemy import insert, select, update, exists
 from sqlalchemy.orm import Session
 
 from motey.infrastructure.database.storage import EmoteStorage
@@ -17,7 +17,7 @@ routes = web.RouteTableDef()
 @aiohttp_jinja2.template('list.html')
 async def list_emotes(request: web.Request):
     with Session(request.app['db']) as db_session:
-        return EmoteStorage(db_session).fetch_all_emotes()
+        return {"emotes": EmoteStorage(db_session).fetch_all_emotes()}
 
 
 @aiohttp_jinja2.template('index.html')
@@ -30,7 +30,7 @@ async def upload(request: web.Request):
     data = await request.post()
     emote = data['emote']
     emote_name = data['emotename']
-    session['discord_id'] = user_data['id']
+    session = await aiohttp_session.get_session(request)
     if not emote_name:
         return {'error_message': 'Please enter emote name'}
 
