@@ -37,14 +37,10 @@ async def toggle_replacing(interaction: nextcord.Interaction):
     with Session(get_db()) as db_session:
         stmt = select(User).where(User.discord_id==interaction.user.id)
         author = db_session.scalars(stmt).one()
-        stmt = (
-        update(User)
-        .where(User.discord_id == interaction.user.id)
-        .values(replace=not author.replace))
-        author.replace = not author.replace
+        stmt = update(author).values(replace=not author.replace)
         db_session.execute(stmt)
         db_session.commit()
-    await interaction.response.send_message(f"{author.replace}")
+    await interaction.response.send_message(f"{not author.replace}")
 
 if __name__ == '__main__':
     client.run(Config.token)
