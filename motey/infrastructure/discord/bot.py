@@ -36,6 +36,11 @@ client = MoteyClient()
 @client.slash_command()
 async def toggle_replacing(interaction: nextcord.Interaction):
     with Session(get_db()) as db_session:
+        if not db_session.query(exists().where(User.discord_id == interaction.user.id)).scalar():
+            user = User(discord_id=interaction.user.id)
+            db_session.add(user)
+            db_session.commit()
+    with Session(get_db()) as db_session:
         stmt = select(User).where(User.discord_id==interaction.user.id)
         author = db_session.scalars(stmt).one()
     with Session(get_db()) as db_session:
