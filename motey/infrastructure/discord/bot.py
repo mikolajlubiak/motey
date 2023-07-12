@@ -19,13 +19,15 @@ class MoteyClient(nextcord.Client):
         if message.author.bot:
             return
         with Session(get_db()) as db_session:
+            if not db_session.query(exists().where(User.discord_id == message.author.id)).scalar():
+                user = User(discord_id=message.author.id)
+                db_session.add(user)
+                db_session.commit()
+        with Session(get_db()) as db_session:
             stmt = select(User).where(User.discord_id==message.author.id)
             author = db_session.scalars(stmt).one()
-        try:
-            if author.replace==False:
-                return
-        except:
-            pass
+        if author.replace==False:
+            return
         emote = self._emotes.get_emote_by_name(message.content)
         if emote is not None:
             await message.delete()
