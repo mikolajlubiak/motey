@@ -1,34 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
-{% if error_message %}
-<p><strong>{{ error_message }}</strong></p>
-{% endif %}
-<form action="/upload" method="post" enctype="multipart/form-data">
-    <div class="field">
-        <label class="label"><strong>Emote name:</strong></label>
-        <div class="control" style="width: fit-content;">
-            <strong>
-                <input class="input" type="text" placeholder="Emote name..." name="emotename" id="emotename" required>
-            </strong>
-        </div>
-    </div>
-    <div class="field">
-        <label class="file-label">
-            <input class="file-input" type="file" name="emote" id="emote" required>
-            <span class="file-cta">
-                <span class="file-icon">
-                    <i class="fas fa-upload"></i>
-                </span>
-                <span class="file-label">
-                    Choose a file...
-                </span>
-            </span>
-        </label>
-    </div>
-    <div class="field">
-        <div class="control">
-            <input class="button" type="submit" value="Submit">
-        </div>
-    </div>
-</form>
+<div class="home">
+Motey is a discord bot that replaces user messages with pictures uploaded by you on this website. To upload an emoji you need permission of an admin of the discord server that you want to upload the emoji to. Users can use a command to stop the bot from replacing their messages and admins can delete chosen emoji Each server has its own set of emojis.
+<br/><br/>
+Authors (Name/Nickname - Role):
+<br/><br/>
+Mikołaj Lubiak - Project leader, Lead programer
+<br/><br/>
+Kasztan2115 - Frontend dev
+<br/><br/>
+Paczek - programer
+<br/><br/>
+Sp00k - programer
+</div>
 {% endblock %}
