@@ -3,42 +3,28 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="{{ url('static', filename='main.css') }}">
 		<title>Motey - Emote Bot</title>
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 		<link rel="icon" type="image/png" href="{{ url('static', filename='favicon.png') }}"/>
 	</head>
 	<body>
-		<!--"Header"-->
-		<section class="hero is-black">
-			<div class="hero-body is-fullheight">
-				<p class="title">
-				Motey
-				</p>
-				<p class="subtitle">
-				Emote bot made by Mikołaj Lubiak
-				</p>
-			</div>
-		</section>
-		<!--Nav bar-->
-		<nav class="navbar has-text-black-bis" role="navigation" aria-label="main navigation">
-			<div id="navbar" class="navbar-menu">
-				<div class="navbar-start">
-					<a class="navbar-item" href="/list">
-						Emote List
-					</a>
-					<a class="navbar-item" href="https://discord.com/api/oauth2/authorize?client_id=1108722454353948692&permissions=8&scope=bot">
-						Bot Invite
-					</a>
-					<a class="navbar-item" href="https://discord.gg/pq9Jjg5Dfj">
-						Discord Server
-					</a>
-
-				</div>
-			</div>
-		</nav>
-		<!--Content-->
-		<div class="container">
-          <div id="content">{% block content %} {% endblock %}</div>
-		</div>
-	</body>
-</html>
+        <div class="title">
+            Motey
+        </div>
+        <div class="navbar">
+            <a href="/">Home</a>
+            <br/>
+            <a href="/login">Login <img src="{{ url('static', filename='dc_icon.png') }}" style="width: 3.5vw; vertical-align:middle;"></a>
+            <br/>
+            <a href="/upload">Upload</a>
+            <br/>
+            <a href="https://discord.gg/pq9Jjg5Dfj" target="_blank">Discord</a>
+            <br/>
+            <a href="https://github.com/Fntoomen/motey" target="_blank">Github</a>
+            <br/>
+            <a href="/list">List</a>
+        </div>
+        <div class="content">
+            {% block content %} {% endblock %}
+        </div>
+    </body>

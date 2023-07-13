@@ -6,9 +6,9 @@ import aiohttp_session
 from sqlalchemy import insert, select, update, exists
 from sqlalchemy.orm import Session
 
-from motey.infrastructure.database.storage import EmoteStorage
+from motey.infrastructure.database.storage import EmoteStorage, UserStorage
 from motey.infrastructure.filesystem import EmoteFileWriter
-from motey.infrastructure.database.tables import User, Server, Emote
+from motey.infrastructure.database.tables import User, Server, Emote, users_servers_association_table
 
 from motey.infrastructure.config import Config
 
@@ -25,11 +25,18 @@ async def index(request: web.Request):
     return None
 
 
-@aiohttp_jinja2.template('index.html')
+@aiohttp_jinja2.template('upload.html')
 async def upload(request: web.Request):
+    session = await aiohttp_session.get_session(request)
+    with Session(request.app['db']) as db_session:
+        return {"servers": UserStorage(db_session).get_user_servers(session['discord_id'])}
+
+@aiohttp_jinja2.template('index.html')
+async def process_upload(request: web.Request):
     data = await request.post()
     emote = data['emote']
     emote_name = data['emotename']
+    server = data['server']
     session = await aiohttp_session.get_session(request)
     if not emote_name:
         return {'error_message': 'Please enter emote name'}
@@ -85,4 +92,19 @@ async def process_oauth(request: web.Request):
             user = User(discord_id=session['discord_id'])
             db_session.add(user)
             db_session.commit()
+        stmt = select(User).where(User.discord_id == session['discord_id'])
+        user = db_session.execute(stmt).scalar()
+        for guild in guilds:
+            #add name updating in existing guilds
+            id = guild["id"]
+            name = guild["name"]
+            if not db_session.query(exists().where(Server.guild == id, Server.server_users.any(discord_id=session['discord_id']))).scalar():
+                user = db_session.query(User).filter_by(discord_id=session['discord_id']).first()
+                server = db_session.query(Server).filter_by(guild=id).first()
+                server.server_users.append(user)
+                db_session.commit()
+            if not db_session.query(exists().where(Server.guild == id)).scalar():
+                server = Server(guild=id, name=name)
+                db_session.add(server)
+                db_session.commit()
     raise web.HTTPFound(location='/')
