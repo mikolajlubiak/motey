@@ -22,8 +22,8 @@ class EmoteStorage:
         self._session.add(emote)
         self._session.commit()
 
-    def get_emote_by_name(self, name: str, server_id: str) -> Optional[Emote]:
-        stmt = select(Emote).join(Emote.emote_servers).where(Emote.name == name, Server.id.contains(server_id))
+    def get_emote_by_name(self, name: str, server_id: int) -> Optional[Emote]:
+        stmt = select(Emote).join(Emote.emote_servers).where(Emote.name == name, Server.id == server_id)
         try:
             return self._session.scalars(stmt).one()
         except:
@@ -32,7 +32,8 @@ class UserStorage:
     def __init__(self, session: Session):
         self._session = session
 
-    def get_user_servers(self, discord_id: str) -> List[Server]:
+    def get_user_servers(self) -> List[Server]:
+        discord_id = self._session['discord_id']
         stmt = select(User).where(User.discord_id == discord_id)
         user = self._session.execute(stmt).scalar()
         try:
