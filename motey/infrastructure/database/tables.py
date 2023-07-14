@@ -41,8 +41,8 @@ emotes_servers_association_table = Table(
     
 class Server(Base):
         __tablename__ = "servers"
-        name: Mapped[str] = mapped_column(String(32), nullable=False)
         id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+        name: Mapped[str] = mapped_column(String(32), nullable=False)
         guild: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
         server_users: Mapped[List["User"]] = relationship(back_populates="user_servers", secondary=users_servers_association_table)
         server_admins: Mapped[List["User"]] = relationship(back_populates="admin_servers", secondary=admins_servers_association_table)
