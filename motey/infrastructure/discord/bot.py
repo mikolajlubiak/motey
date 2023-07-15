@@ -31,7 +31,7 @@ class MoteyClient(nextcord.Client):
             author = db_session.scalars(stmt).one()
         if author.replace==False:
             return
-        emote = self._emotes.get_emote_by_name(message.content)
+        emote = self._emotes.get_emote_by_name(message.content, message.guild.id)
         if emote is not None:
             await message.delete()
             with open(emote.path, 'rb') as f:
