@@ -1,7 +1,7 @@
 import os
+import uuid
 from io import BufferedReader
 from pathlib import Path
-import os
 
 from motey.infrastructure.config import Config
 
@@ -42,7 +42,8 @@ class EmoteFileWriter:
 
     def _build_file_path(self) -> Path:
         extension = self._get_file_extension()
-        return self._emotes_dir / f'{self._emote_name}.{extension}'
+        emote_uuid = str(uuid.uuid4())
+        return self._emotes_dir / f'{emote_uuid}.{extension}'
 
     def _get_file_extension(self) -> str:
         return self._file_name.split('.')[-1]
