@@ -67,4 +67,4 @@ class Emote(Base):
         author: Mapped["User"] = relationship(back_populates="user_emotes")
         emote_servers: Mapped[Optional[List["Server"]]] = relationship(back_populates="server_emotes", secondary=emotes_servers_association_table)
         name: Mapped[str] = mapped_column(String(32), nullable=False)
-        path: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
+        path: Mapped[str] = mapped_column(String(77), nullable=False, unique=True)
