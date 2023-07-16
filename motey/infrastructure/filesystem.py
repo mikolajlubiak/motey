@@ -18,6 +18,7 @@ class EmoteFileWriter:
         self._file_name = file_name
         self._reader = reader
         self._emotes_dir = config.emotes_dir
+        self._emote_uuid = str(uuid.uuid4())
 
     @property
     def extension_valid(self) -> bool:
@@ -42,8 +43,7 @@ class EmoteFileWriter:
 
     def _build_file_path(self) -> Path:
         extension = self._get_file_extension()
-        emote_uuid = str(uuid.uuid4())
-        return self._emotes_dir / f'{emote_uuid}.{extension}'
+        return self._emotes_dir / f'{self._emote_uuid}.{extension}'
 
     def _get_file_extension(self) -> str:
         return self._file_name.split('.')[-1]
