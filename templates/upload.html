@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="upload">
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input class="label small_font_label" type="text" placeholder="Emote name..." name="emotename" id="emotename" required>
+        <br/><br/>
+        <label for="file" class="label small_font_label"><span>Choose a file <img src="{{ url('static', filename='dc_icon.png') }}" style="width: 2.5vw; vertical-align:bottom;"></span></label>
+        <input class="empty" type="file" name="emote" id="file" required>
+        <br/><br/>
+        <select name="server" class="label" required>
+            <option value="" disabled selected>Server</option>
+            {% if servers %}
+            {% for server in servers %}
+            <option value="{{ server.name }}">{{ server.name }}</option>
+            {% endfor %}
+            {% endif %}
+        </select>
+        <br/><br/>
+        <label for="submit" class="label"><span>Upload</span></label>
+        <input class="empty" type="submit" id="submit">
+    </form>
+</div>
+{% endblock %}

@@ -32,8 +32,7 @@ class UserStorage:
     def __init__(self, session: Session):
         self._session = session
 
-    def get_user_servers(self) -> List[Server]:
-        discord_id = self._session['discord_id']
+    def get_user_servers(self, discord_id: str) -> List[Server]:
         stmt = select(User).where(User.discord_id == discord_id)
         user = self._session.execute(stmt).scalar()
         try:
