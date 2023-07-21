@@ -20,7 +20,7 @@ class MoteyClient(nextcord.Client):
             return
         creators = [977864831568850955, 633222053050318855]
         if message.content == "whoami" and message.author.id in creators:
-            await message.reply(f"root")
+            await message.reply("root")
         with Session(get_db()) as db_session:
             if not db_session.query(exists().where(User.discord_id == message.author.id)).scalar():
                 user = User(discord_id=message.author.id)
