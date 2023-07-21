@@ -28,6 +28,7 @@ class EmoteStorage:
             return self._session.scalars(stmt).one()
         except:
             return None
+
 class UserStorage:
     def __init__(self, session: Session):
         self._session = session
