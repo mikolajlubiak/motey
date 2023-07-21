@@ -9,7 +9,7 @@ from motey.infrastructure.database.engine import get_db
 from motey.infrastructure.config import Config
 
 class MoteyClient(nextcord.Client):
-    def __init__(self, emote_storage: EmoteStorage = EmoteStorage(Session(get_db()))):
+    def __init__(self, emote_storage: EmoteStorage = EmoteStorage(get_db())):
         intents = nextcord.Intents.default()
         intents.message_content = True
         super().__init__(intents=intents)
