@@ -9,7 +9,7 @@ from motey.infrastructure.database.engine import get_db
 from motey.infrastructure.config import Config
 
 class MoteyClient(nextcord.Client):
-    def __init__(self, emote_storage: EmoteStorage = EmoteStorage(Session(get_db()))):
+    def __init__(self, emote_storage: EmoteStorage = EmoteStorage(get_db())):
         intents = nextcord.Intents.default()
         intents.message_content = True
         super().__init__(intents=intents)
@@ -31,7 +31,7 @@ class MoteyClient(nextcord.Client):
             author = db_session.scalars(stmt).one()
         if author.replace==False:
             return
-        emote = self._emotes.get_emote_by_name(message.content, message.guild.id)
+        emote = self._emotes.get_emote_by_name(message.content)
         if emote is not None:
             await message.delete()
             with open(emote.path, 'rb') as f:
