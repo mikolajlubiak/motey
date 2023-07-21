@@ -25,8 +25,8 @@ class EmoteStorage:
             db_session.add(emote)
             db_session.commit()
 
-    def get_emote_by_name(self, name: str, server_id: int) -> Optional[Emote]:
-        stmt = select(Emote).join(Emote.emote_servers).where(Emote.name == name, Server.id == server_id)
+    def get_emote_by_name(self, name: str) -> Optional[Emote]:
+        stmt = select(Emote).where(Emote.name == name)
         with Session(self._db) as db_session:
             try:
                 return db_session.scalars(stmt).one()
