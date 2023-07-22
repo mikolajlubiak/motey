@@ -16,14 +16,16 @@ routes = web.RouteTableDef()
 
 @aiohttp_jinja2.template('list.html')
 async def list_emotes(request: web.Request):
-    emotes = EmoteStorage(request.app['db']).fetch_all_emotes()
+    emotes_list = EmoteStorage(request.app['db']).fetch_all_emotes()
+    emotes = []
     guilds = {}
     usernames = {}
     chosen_guild = {}
-    for emote in emotes:
-        guilds[emote.name] = emote.emote_servers
-        usernames[emote.name] = emote.author.name
-        chosen_guild[emote.name] = "abc"
+    for emote in emotes_list:
+        emotes.append(emote[0])
+        guilds[emote[0].name] = emote[1]
+        usernames[emote[0].name] = emote[2]
+        chosen_guild[emote[0].name] = "abc"
     return {"emotes": emotes, "usernames": usernames, "guilds": guilds, "cguild": chosen_guild}
 
 
