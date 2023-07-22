@@ -89,7 +89,7 @@ async def process_oauth(request: web.Request):
     async with aiohttp.ClientSession(headers=header) as client_session:
         async with client_session.get("https://discord.com/api/users/@me") as response:
             user_data = await response.json()
-            session['discord_id'] = user_data['id']
+            session['discord_id'] = int(user_data['id'])
     async with aiohttp.ClientSession(headers=header) as client_session:
         async with client_session.get("https://discord.com/api/users/@me/guilds") as response:
             guilds = await response.json()
