@@ -37,11 +37,11 @@ class UserStorage:
     def __init__(self, database):
         self._db = database
 
-    def get_user_servers(self, discord_id: str) -> List[Server]:
+    def get_user_servers(self, discord_id: int) -> List[Server]:
         stmt = select(User).where(User.discord_id == discord_id)
         with Session(self._db) as db_session:
-            user = db_session.execute(stmt).scalar()
-        try:
-            return user.user_servers
-        except:
-            return None
+            user = db_session.scalars(stmt).one()
+            try:
+                return user.user_servers
+            except:
+                return None

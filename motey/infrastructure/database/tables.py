@@ -50,14 +50,15 @@ class Server(Base):
 
 class User(Base):
         __tablename__ = "users"
-        
         id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+        name: Mapped[str] = mapped_column(String(32), nullable=False, unique=True)
         discord_id: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
         user_servers: Mapped[Optional[List["Server"]]] = relationship(back_populates="server_users", secondary=users_servers_association_table)
         admin_servers: Mapped[Optional[List["Server"]]] = relationship(back_populates="server_admins", secondary=admins_servers_association_table)
         user_emotes: Mapped[Optional[List["Emote"]]] = relationship(back_populates="author")
         replace: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
         banned: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+
 
 class Emote(Base):
         __tablename__ = "emotes"

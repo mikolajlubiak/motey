@@ -16,7 +16,15 @@ routes = web.RouteTableDef()
 
 @aiohttp_jinja2.template('list.html')
 async def list_emotes(request: web.Request):
-    return {"emotes": EmoteStorage(request.app['db']).fetch_all_emotes()}
+    emotes = EmoteStorage(request.app['db']).fetch_all_emotes()
+    guilds = {}
+    usernames = {}
+    chosen_guild = {}
+    for emote in emotes:
+        guilds[emote.name] = emote.emote_servers
+        usernames[emote.name] = emote.author.name
+        chosen_guild[emote.name] = "abc"
+    return {"emotes": emotes, "usernames": usernames, "guilds": guilds, "cguild": chosen_guild}
 
 
 @aiohttp_jinja2.template('index.html')
@@ -81,28 +89,28 @@ async def process_oauth(request: web.Request):
     async with aiohttp.ClientSession(headers=header) as client_session:
         async with client_session.get("https://discord.com/api/users/@me") as response:
             user_data = await response.json()
-            session['discord_id'] = user_data['id']
+            session['discord_id'] = int(user_data['id'])
     async with aiohttp.ClientSession(headers=header) as client_session:
         async with client_session.get("https://discord.com/api/users/@me/guilds") as response:
             guilds = await response.json()
     with Session(request.app['db']) as db_session:
         if not db_session.query(exists().where(User.discord_id == session['discord_id'])).scalar():
-            user = User(discord_id=session['discord_id'])
+            user = User(discord_id=session['discord_id'], name=user_data["global_name"])
             db_session.add(user)
             db_session.commit()
         stmt = select(User).where(User.discord_id == session['discord_id'])
-        user = db_session.execute(stmt).scalar()
+        user = db_session.scalars(stmt)
         for guild in guilds:
             #add name updating in existing guilds
-            id = guild["id"]
-            name = guild["name"]
-            if not db_session.query(exists().where(Server.guild == id)).scalar():
-                server = Server(guild=id, name=name)
+            guild_id = int(guild["id"])
+            guild_name = guild["name"]
+            if not db_session.query(exists().where(Server.guild == guild_id)).scalar():
+                server = Server(guild=guild_id, name=guild_name)
                 db_session.add(server)
                 db_session.commit()
-            if not db_session.query(exists().where(Server.guild == id, Server.server_users.any(discord_id=session['discord_id']))).scalar():
+            if not db_session.query(exists().where(Server.guild == guild_id, Server.server_users.any(discord_id=session['discord_id']))).scalar():
                 user = db_session.query(User).filter_by(discord_id=session['discord_id']).first()
-                server = db_session.query(Server).filter_by(guild=id).first()
+                server = db_session.query(Server).filter_by(guild=guild_id).first()
                 server.server_users.append(user)
                 db_session.commit()
     raise web.HTTPFound(location='/')
