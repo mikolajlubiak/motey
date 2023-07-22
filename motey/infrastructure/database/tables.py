@@ -50,8 +50,8 @@ class Server(Base):
 
 class User(Base):
         __tablename__ = "users"
-        name: Mapped[str] = mapped_column(String(32), nullable=False)
         id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+        name: Mapped[str] = mapped_column(String(32), nullable=False)
         discord_id: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
         user_servers: Mapped[Optional[List["Server"]]] = relationship(back_populates="server_users", secondary=users_servers_association_table)
         admin_servers: Mapped[Optional[List["Server"]]] = relationship(back_populates="server_admins", secondary=admins_servers_association_table)
