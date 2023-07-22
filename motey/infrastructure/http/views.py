@@ -99,18 +99,18 @@ async def process_oauth(request: web.Request):
             db_session.add(user)
             db_session.commit()
         stmt = select(User).where(User.discord_id == session['discord_id'])
-        user = db_session.execute(stmt).scalar()
+        user = db_session.scalars(stmt)
         for guild in guilds:
             #add name updating in existing guilds
-            id = guild["id"]
-            name = guild["name"]
-            if not db_session.query(exists().where(Server.guild == id)).scalar():
-                server = Server(guild=id, name=name)
+            guild_id = int(guild["id"])
+            guild_name = guild["name"]
+            if not db_session.query(exists().where(Server.guild == guild_id)).scalar():
+                server = Server(guild=guild_id, name=guild_name)
                 db_session.add(server)
                 db_session.commit()
-            if not db_session.query(exists().where(Server.guild == id, Server.server_users.any(discord_id=session['discord_id']))).scalar():
+            if not db_session.query(exists().where(Server.guild == guild_id, Server.server_users.any(discord_id=session['discord_id']))).scalar():
                 user = db_session.query(User).filter_by(discord_id=session['discord_id']).first()
-                server = db_session.query(Server).filter_by(guild=id).first()
+                server = db_session.query(Server).filter_by(guild=guild_id).first()
                 server.server_users.append(user)
                 db_session.commit()
     raise web.HTTPFound(location='/')
