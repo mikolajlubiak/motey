@@ -12,17 +12,17 @@
             Motey
         </div>
         <div class="navbar">
-            <a href="/">Home</a>
+            <a href="/"><div class="navbar_button">Home</div></a>
             <br/>
-            <a href="/login">Login <img src="{{ url('static', filename='dc_icon.png') }}" style="width: 3.5vw; vertical-align:middle;"></a>
+            <a href="/login"><div class="navbar_button">Login <img src="{{ url('static', filename='dc_icon.png') }}" style="width: 6vh; vertical-align:text-top;"></div></a>
             <br/>
-            <a href="/upload">Upload</a>
+            <a href="/upload"><div class="navbar_button">Upload</div></a>
             <br/>
-            <a href="https://discord.gg/pq9Jjg5Dfj" target="_blank">Discord</a>
+            <a href="https://discord.gg/pq9Jjg5Dfj" target="_blank"><div class="navbar_button">Discord</div></a>
             <br/>
-            <a href="https://github.com/Fntoomen/motey" target="_blank">Github</a>
+            <a href="https://github.com/Fntoomen/motey" target="_blank"><div class="navbar_button">Github</div></a>
             <br/>
-            <a href="/list">List</a>
+            <a href="/list"><div class="navbar_button">List</div></a>
         </div>
         <div class="content">
             {% block content %} {% endblock %}

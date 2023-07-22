@@ -16,7 +16,15 @@ routes = web.RouteTableDef()
 
 @aiohttp_jinja2.template('list.html')
 async def list_emotes(request: web.Request):
-    return {"emotes": EmoteStorage(request.app['db']).fetch_all_emotes()}
+    emotes = EmoteStorage(request.app['db']).fetch_all_emotes()
+    guilds = {}
+    usernames = {}
+    chosen_guild = {}
+    for emote in emotes:
+        guilds[emote.name] = emote.emote_servers
+        usernames[emote.name] = emote.author.name
+        chosen_guild[emote.name] = "abc"
+    return {"emotes": emotes, "usernames": usernames, "guilds": guilds, "cguild": chosen_guild}
 
 
 @aiohttp_jinja2.template('index.html')
@@ -87,7 +95,7 @@ async def process_oauth(request: web.Request):
             guilds = await response.json()
     with Session(request.app['db']) as db_session:
         if not db_session.query(exists().where(User.discord_id == session['discord_id'])).scalar():
-            user = User(discord_id=session['discord_id'])
+            user = User(discord_id=session['discord_id'], name=user_data["global_name"])
             db_session.add(user)
             db_session.commit()
         stmt = select(User).where(User.discord_id == session['discord_id'])
