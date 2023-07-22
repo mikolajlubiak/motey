@@ -16,16 +16,15 @@ routes = web.RouteTableDef()
 
 @aiohttp_jinja2.template('list.html')
 async def list_emotes(request: web.Request):
-    with Session(request.app['db']) as db_session:
-        emotes = EmoteStorage(db_session).fetch_all_emotes()
-        guilds = {}
-        usernames = {}
-        chosen_guild = {}
-        for emote in emotes:
-            guilds[emote.name] = emote.emote_servers
-            usernames[emote.name] = emote.author.name
-            chosen_guild[emote.name] = "abc"
-        return {"emotes": emotes, "usernames": usernames, "guilds": guilds, "cguild": chosen_guild}
+    emotes = EmoteStorage(request.app['db']).fetch_all_emotes()
+    guilds = {}
+    usernames = {}
+    chosen_guild = {}
+    for emote in emotes:
+        guilds[emote.name] = emote.emote_servers
+        usernames[emote.name] = emote.author.name
+        chosen_guild[emote.name] = "abc"
+    return {"emotes": emotes, "usernames": usernames, "guilds": guilds, "cguild": chosen_guild}
 
 
 @aiohttp_jinja2.template('index.html')
@@ -36,8 +35,7 @@ async def index(request: web.Request):
 @aiohttp_jinja2.template('upload.html')
 async def upload(request: web.Request):
     session = await aiohttp_session.get_session(request)
-    with Session(request.app['db']) as db_session:
-        return {"servers": UserStorage(db_session).get_user_servers(session['discord_id'])}
+    return {"servers": UserStorage(request.app['db']).get_user_servers(session['discord_id'])}
 
 @aiohttp_jinja2.template('index.html')
 async def process_upload(request: web.Request):
@@ -58,10 +56,10 @@ async def process_upload(request: web.Request):
     with Session(request.app['db']) as db_session:
         stmt = select(User).where(User.discord_id==session['discord_id'])
         author = db_session.scalars(stmt).one()
-        emote_storage = EmoteStorage(db_session)
-        if emote_storage.emote_exists(emote_name):
-            return {'error_message': 'Emote with this name already exists'}
-        emote_storage.add_emote(emote_name, str(file_writer.path), author)
+    emote_storage = EmoteStorage(request.app['db'])
+    if emote_storage.emote_exists(emote_name):
+        return {'error_message': 'Emote with this name already exists'}
+    emote_storage.add_emote(emote_name, str(file_writer.path), author)
 
     raise web.HTTPFound(location='/')
 
