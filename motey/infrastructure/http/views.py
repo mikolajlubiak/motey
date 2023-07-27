@@ -18,15 +18,11 @@ routes = web.RouteTableDef()
 async def list_emotes(request: web.Request):
     emotes_list = EmoteStorage(request.app['db']).fetch_all_emotes()
     emotes = []
-    guilds = {}
     usernames = {}
-    chosen_guild = {}
     for emote in emotes_list:
         emotes.append(emote[0])
-        guilds[emote[0].name] = emote[1]
-        usernames[emote[0].name] = emote[2]
-        chosen_guild[emote[0].name] = "abc"
-    return {"emotes": emotes, "usernames": usernames, "guilds": guilds, "cguild": chosen_guild}
+        usernames[emote[0].name] = emote[1]
+    return {"emotes": emotes, "usernames": usernames}
 
 
 @aiohttp_jinja2.template('index.html')
@@ -44,7 +40,6 @@ async def process_upload(request: web.Request):
     data = await request.post()
     emote = data['emote']
     emote_name = data['emotename']
-    server = data['server']
     session = await aiohttp_session.get_session(request)
     if not emote_name:
         return {'error_message': 'Please enter emote name'}
