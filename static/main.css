@@ -99,6 +99,7 @@ text-decoration: none;
 }
 .list_content_left
 {
+    align-content: center;
     padding-top: 10vh;
     padding-left: 0.5vw;
     position: absolute;
@@ -149,4 +150,18 @@ text-decoration: none;
     position: absolute;
     width: 12vw;
     height: 9vh;
+}
+.emote_image
+{
+    border-style: solid;
+    box-sizing: border-box;
+    width: fit-content;
+    height: min-content;
+    float: left;
+}
+.emote_test
+{
+    float: left;
+    padding-left: 1vw;
+    font-size: 3vh;
 }

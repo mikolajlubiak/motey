@@ -2,14 +2,15 @@
 {% block content %}
     <div class="list_content_left">
     {% if emotes %}
-    {% for emote in emotes %}
-        <div>
-            {{ emote.name }}
-            {{ usernames[emote.name] }}
-            {{ cguild[emote.name] }}
-            <img src='{{ emote.path }}' style='max-width:100px;width:100%'>
-        </div>
+    {% for emote in emotes %}<!--{{ cguild[emote.name] }}-->
+    <div class="emote_image">
+        <img src='{{ emote.path }}' style='width: 8vw;'>
+    </div>
+    <div class="emote_test">
+        {{ emote.name }}<br/>{{ usernames[emote.name] }}
+    </div>
     {% endfor %}
     {% endif %}
-    </div><div class="list_content_right"></div>
+    </div>
+    <div class="list_content_right">right</div>
 {% endblock %}
