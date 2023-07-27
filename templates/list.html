@@ -1,16 +1,37 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="list_content_left">
-    {% if emotes %}
-    {% for emote in emotes %}<!--{{ cguild[emote.name] }}-->
-    <div class="emote_image">
-        <img src='{{ emote.path }}' style='width: 8vw;'>
-    </div>
-    <div class="emote_test">
-        {{ emote.name }}<br/>{{ usernames[emote.name] }}
-    </div>
-    {% endfor %}
-    {% endif %}
-    </div>
-    <div class="list_content_right">right</div>
+{% if emotes %}
+<table>
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Author</th>
+			<th>Emote</th>
+		</tr>
+	</thead>
+
+	<tfoot>
+		<tr>
+			<th>Name</th>
+			<th>Author</th>
+			<th>Emote</th>
+		</tr>
+	</tfoot>
+	<tbody>
+		{% for emote in emotes %}
+		<tr>
+			<td>
+				<strong>{{ emote.name }}</strong>
+			</td>
+			<td>
+                <strong>{{ usernames[emote.name] }}</strong>
+			</td>
+			<td>
+				<img src='{{ emote.path }}' style='max-width:100px;width:100%'>
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endif %}
 {% endblock %}

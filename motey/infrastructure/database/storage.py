@@ -16,7 +16,7 @@ class EmoteStorage:
             emotes = db_session.scalars(select(Emote)).all()
             out = []
             for emote in emotes:
-                out.append([emote, emote.emote_servers, emote.author.name])
+                out.append([emote, emote.author.name])
             return out
 
     def emote_exists(self, name: str) -> bool:
