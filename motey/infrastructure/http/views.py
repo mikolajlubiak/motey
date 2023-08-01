@@ -30,11 +30,6 @@ async def index(request: web.Request):
     return None
 
 
-@aiohttp_jinja2.template('upload.html')
-async def upload(request: web.Request):
-    session = await aiohttp_session.get_session(request)
-    return {"servers": UserStorage(request.app['db']).get_user_servers(session['discord_id'])}
-
 @aiohttp_jinja2.template('index.html')
 async def process_upload(request: web.Request):
     data = await request.post()
