@@ -30,6 +30,10 @@ async def index(request: web.Request):
     return None
 
 
+@aiohttp_jinja2.template('upload.html')
+async def upload(request: web.Request):
+    return None
+
 
 @aiohttp_jinja2.template('upload.html')
 async def process_upload(request: web.Request):
