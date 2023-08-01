@@ -31,7 +31,7 @@ async def index(request: web.Request):
 
 
 
-@aiohttp_jinja2.template('index.html')
+@aiohttp_jinja2.template('upload.html')
 async def process_upload(request: web.Request):
     data = await request.post()
     emote = data['emote']
