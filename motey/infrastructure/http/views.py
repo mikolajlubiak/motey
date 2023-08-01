@@ -30,6 +30,7 @@ async def index(request: web.Request):
     return None
 
 
+
 @aiohttp_jinja2.template('index.html')
 async def process_upload(request: web.Request):
     data = await request.post()
@@ -53,7 +54,7 @@ async def process_upload(request: web.Request):
         return {'error_message': 'Emote with this name already exists'}
     emote_storage.add_emote(emote_name, str(file_writer.path), author)
 
-    raise web.HTTPFound(location='/')
+    raise web.HTTPFound(location='/upload')
 
 
 @routes.get('/process_oauth')
