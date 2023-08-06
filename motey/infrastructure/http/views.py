@@ -32,17 +32,24 @@ async def index(request: web.Request):
 
 @aiohttp_jinja2.template('upload.html')
 async def upload(request: web.Request):
-    session = await aiohttp_session.get_session(request)
-    return {"servers": UserStorage(request.app['db']).get_user_servers(session['discord_id'])}
+    return None
 
-@aiohttp_jinja2.template('index.html')
+
+@aiohttp_jinja2.template('upload.html')
 async def process_upload(request: web.Request):
     data = await request.post()
     emote = data['emote']
     emote_name = data['emotename']
     session = await aiohttp_session.get_session(request)
-    if not emote_name:
-        return {'error_message': 'Please enter emote name'}
+    if not emote_name or not emote:
+        return {'error_message': 'Emote file or emote name empty'}
+
+    with Session(request.app['db']) as db_session:
+        stmt = select(User).where(User.discord_id==session['discord_id'])
+        author = db_session.scalars(stmt).one()
+
+    if author.banned==True:
+        return {'error_message': 'User banned from uploading emotes'}
 
     file_writer = EmoteFileWriter(emote_name, emote.filename, emote.file)
     if file_writer.extension_valid:
@@ -50,15 +57,12 @@ async def process_upload(request: web.Request):
     else:
         return {'error_message': 'File extension invalid'}
 
-    with Session(request.app['db']) as db_session:
-        stmt = select(User).where(User.discord_id==session['discord_id'])
-        author = db_session.scalars(stmt).one()
     emote_storage = EmoteStorage(request.app['db'])
     if emote_storage.emote_exists(emote_name):
         return {'error_message': 'Emote with this name already exists'}
     emote_storage.add_emote(emote_name, str(file_writer.path), author)
 
-    raise web.HTTPFound(location='/')
+    raise web.HTTPFound(location='/upload')
 
 
 @routes.get('/process_oauth')

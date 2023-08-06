@@ -2,6 +2,8 @@ from aiohttp import web
 import aiohttp_jinja2
 import jinja2
 import aiohttp_session
+import logging
+
 
 from motey.infrastructure.config import Config
 from motey.infrastructure.database.engine import get_db
@@ -26,4 +28,5 @@ def run_app(config: Config = Config()) -> None:
     aiohttp_session.setup(app, aiohttp_session.SimpleCookieStorage())
     setup_middlewares(app)
     app.cleanup_ctx.append(_attach_database_context)
+    logging.basicConfig(level=logging.DEBUG)
     web.run_app(app, host=config.http_host, port=config.http_port)
