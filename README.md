@@ -10,10 +10,14 @@ And replace default parameters with your own configuration
 
 Install all required packages (virtual environment usage recommended):
 ```shell
+# optional
+virtualenv .venv
+source .venv/bin/activate
+# required
 pip install -r requirements.txt
 ```
 
-Start database with docker compose:
+Start database with docker compose (add `-d` flag to run as daemon - in background):
 ```shell
 docker-compose up
 ```
