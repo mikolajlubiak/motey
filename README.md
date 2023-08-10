@@ -1,4 +1,4 @@
-# Motey monorepo
+# Motey
 
 ## Running web server
 
@@ -10,7 +10,7 @@ And replace default parameters with your own configuration
 
 Install all required packages (virtual environment usage recommended):
 ```shell
-# optional
+# recommended
 virtualenv .venv
 source .venv/bin/activate
 # required
@@ -20,6 +20,8 @@ pip install -r requirements.txt
 Start database with docker compose (add `-d` flag to run as daemon - in background):
 ```shell
 docker-compose up
+# or
+docker-compose up -d
 ```
 
 Set FOREIGN_KEY_CHECKS to 0 (need because otherwise the database wouldn't want to drop tables because of foreign keys):
@@ -32,12 +34,16 @@ Initialize database (note: if "motey" database already exists, this will drop al
 ./init_database.sh
 ```
 
-Now you can start HTTP server:
+Now you can start HTTP server (add `&` to run in background):
 ```shell
 ./run.sh
+# or
+./run.sh &
 ```
 
-And / or Discord bot:
+And / or Discord bot (add `&` to run in background):
 ```shell
 ./bot.sh
+# or
+./bot.sh &
 ```
