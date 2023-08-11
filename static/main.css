@@ -43,8 +43,8 @@ a
 	padding-right: 0%;
 	padding-top: 10vh;
 	text-align: center;
-	font-size: 6vh;
-	line-height: 1.75;
+	font-size: 2.4vw;
+	line-height: 10vh;
 }
 
 .content
@@ -159,5 +159,5 @@ a
 	box-sizing: border-box;
 	position: absolute;
 	width: 12vw;
-	height: 9vh;
+	height: 8vh;
 }
