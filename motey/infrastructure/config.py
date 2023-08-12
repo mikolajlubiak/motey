@@ -1,7 +1,9 @@
 import os
 import pathlib
+import base64
 
 from dataclasses import dataclass
+from cryptography.fernet import Fernet
 
 
 @dataclass(frozen=True)
@@ -16,6 +18,7 @@ class Config:
     # HTTP
     http_host = os.getenv('HTTP_HOST')
     http_port = int(os.getenv('HTTP_PORT'))
+    cookie_encryption_key = base64.urlsafe_b64decode(Fernet.generate_key())
 
     # Filesystem
     base_dir = pathlib.Path(__file__).parent.parent
