@@ -3,7 +3,7 @@ from aiohttp import web
 from motey.infrastructure.config import Config
 
 from motey.infrastructure.http.views import list_emotes, index, process_oauth, process_upload, upload
-from motey.infrastructure.config import Config
+
 
 def setup_routes(app: Application, config: Config = Config()) -> None:
     app.router.add_static(str(config.emotes_dir), config.emotes_dir)

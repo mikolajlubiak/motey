@@ -3,16 +3,17 @@ from aiohttp import web
 import aiohttp_jinja2
 import aiohttp_session
 
-from sqlalchemy import insert, select, update, exists
+from sqlalchemy import select, exists
 from sqlalchemy.orm import Session
 
-from motey.infrastructure.database.storage import EmoteStorage, UserStorage
+from motey.infrastructure.database.storage import EmoteStorage
 from motey.infrastructure.filesystem import EmoteFileWriter
-from motey.infrastructure.database.tables import User, Server, Emote, users_servers_association_table
+from motey.infrastructure.database.tables import User, Server
 
 from motey.infrastructure.config import Config
 
 routes = web.RouteTableDef()
+
 
 @aiohttp_jinja2.template('list.html')
 async def list_emotes(request: web.Request):
@@ -45,10 +46,10 @@ async def process_upload(request: web.Request):
         return {'error_message': 'Emote file or emote name empty'}
 
     with Session(request.app['db']) as db_session:
-        stmt = select(User).where(User.discord_id==session['discord_id'])
+        stmt = select(User).where(User.discord_id == session['discord_id'])
         author = db_session.scalars(stmt).one()
 
-    if author.banned==True:
+    if author.banned is True:
         return {'error_message': 'User banned from uploading emotes'}
 
     file_writer = EmoteFileWriter(emote_name, emote.filename, emote.file)
@@ -86,7 +87,7 @@ async def process_oauth(request: web.Request):
     header = {
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/x-www-form-urlencoded"
-    }  
+    }
     async with aiohttp.ClientSession(headers=header) as client_session:
         async with client_session.get("https://discord.com/api/users/@me") as response:
             user_data = await response.json()
@@ -102,7 +103,7 @@ async def process_oauth(request: web.Request):
         stmt = select(User).where(User.discord_id == session['discord_id'])
         user = db_session.scalars(stmt)
         for guild in guilds:
-            #add name updating in existing guilds
+            # add name updating in existing guilds
             guild_id = int(guild["id"])
             guild_name = guild["name"]
             if not db_session.query(exists().where(Server.guild == guild_id)).scalar():

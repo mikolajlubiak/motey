@@ -29,6 +29,7 @@ async def handle_404(request):
 async def handle_500(request):
     return aiohttp_jinja2.render_template('500.html', request, {}, status=500)
 
+
 @web.middleware
 async def check_login(request, handler):
     if request.path == '/upload':
