@@ -2,7 +2,6 @@ from typing import Optional, List
 
 from sqlalchemy import select, exists
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 
 from motey.infrastructure.database.tables import Emote, Server, User
 
@@ -36,6 +35,7 @@ class EmoteStorage:
                 return db_session.scalars(stmt).one()
             except:
                 return None
+
 
 class UserStorage:
     def __init__(self, database):

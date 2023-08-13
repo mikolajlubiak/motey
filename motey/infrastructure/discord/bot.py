@@ -1,12 +1,13 @@
 import nextcord
 
-from sqlalchemy import insert, select, update, exists
+from sqlalchemy import select, update, exists
 from sqlalchemy.orm import Session
 
 from motey.infrastructure.database.storage import EmoteStorage
-from motey.infrastructure.database.tables import User, Server, Emote
+from motey.infrastructure.database.tables import User
 from motey.infrastructure.database.engine import get_db
 from motey.infrastructure.config import Config
+
 
 class MoteyClient(nextcord.Client):
     def __init__(self, emote_storage: EmoteStorage = EmoteStorage(get_db())):
@@ -27,9 +28,9 @@ class MoteyClient(nextcord.Client):
                 db_session.add(user)
                 db_session.commit()
         with Session(get_db()) as db_session:
-            stmt = select(User).where(User.discord_id==message.author.id)
+            stmt = select(User).where(User.discord_id == message.author.id)
             author = db_session.scalars(stmt).one()
-        if author.replace==False:
+        if author.replace is False:
             return
         emote = self._emotes.get_emote_by_name(message.content)
         if emote is not None:
@@ -40,7 +41,10 @@ class MoteyClient(nextcord.Client):
                 await webhook.send(file=picture, username=message.author.name, avatar_url=message.author.avatar)
                 await webhook.delete()
 
+
 client = MoteyClient()
+
+
 @client.slash_command()
 async def toggle_replacing(interaction: nextcord.Interaction):
     with Session(get_db()) as db_session:
@@ -49,13 +53,14 @@ async def toggle_replacing(interaction: nextcord.Interaction):
             db_session.add(user)
             db_session.commit()
     with Session(get_db()) as db_session:
-        stmt = select(User).where(User.discord_id==interaction.user.id)
+        stmt = select(User).where(User.discord_id == interaction.user.id)
         author = db_session.scalars(stmt).one()
     with Session(get_db()) as db_session:
         stmt = (
-        update(User)
-        .where(User.discord_id == interaction.user.id)
-        .values(replace=not author.replace))
+            update(User)
+            .where(User.discord_id == interaction.user.id)
+            .values(replace=not author.replace)
+            )
         author.replace = not author.replace
         db_session.execute(stmt)
         db_session.commit()

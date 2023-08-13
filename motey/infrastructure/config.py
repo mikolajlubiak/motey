@@ -27,11 +27,11 @@ class Config:
     static_files_dir = project_root / 'static'
     emotes_dir = project_root / 'static' / 'emotes'
 
-    #OAUTH
+    # OAUTH
     client_secret = os.getenv('CLIENT_SECRET')
     client_id = os.getenv('CLIENT_ID')
     redirect_url = os.getenv('REDIRECT_URL')
     auth_start_url = os.getenv('AUTH_START_URL')
 
-    #BOT
+    # BOT
     token = os.getenv('BOT_TOKEN')
