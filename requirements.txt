@@ -16,7 +16,7 @@ mysql-connector-python==8.1.0
 nextcord==2.5.0
 protobuf==4.21.12
 PyMySQL==1.1.0
-SQLAlchemy==2.0.17
+SQLAlchemy==2.0.20
 typing_extensions==4.7.1
 yarl==1.9.2
 cryptography==41.0.3
