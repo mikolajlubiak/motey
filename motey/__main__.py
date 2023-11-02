@@ -1,4 +1,4 @@
-from motey.infrastructure.http.server import run_app
+from motey.http.server import run_app
 
 
 run_app()

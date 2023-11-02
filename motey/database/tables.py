@@ -5,13 +5,14 @@ from sqlalchemy import (
         BigInteger,
         String,
         Boolean,
-        ForeignKey
+        ForeignKey,
+        func,
         )
 from sqlalchemy.orm import (
         DeclarativeBase,
         Mapped,
         mapped_column,
-        relationship
+        relationship,
 )
 from typing import List, Optional
 
@@ -20,26 +21,18 @@ class Base(DeclarativeBase):
     pass
 
 
-users_servers_association_table = Table(
-    "users_servers_association_table",
-    Base.metadata,
-    Column("server_id", ForeignKey("servers.id"), primary_key=True),
-    Column("user_id", ForeignKey("users.id"), primary_key=True),
-)
+def create_association_table(name: str, column1: str, column2: str) -> func:
+    return Table(
+            name,
+            Base.metadata,
+            Column(f"{column1}_id", ForeignKey(f"{column1}s.id"), primary_key=True),
+            Column(f"{column2}_id", ForeignKey(f"{column2}s.id"), primary_key=True),
+                )
 
-admins_servers_association_table = Table(
-    "admins_servers_association_table",
-    Base.metadata,
-    Column("server_id", ForeignKey("servers.id"), primary_key=True),
-    Column("user_id", ForeignKey("users.id"), primary_key=True),
-)
 
-emotes_servers_association_table = Table(
-    "emotes_servers_association_table",
-    Base.metadata,
-    Column("server_id", ForeignKey("servers.id"), primary_key=True),
-    Column("emote_id", ForeignKey("emotes.id"), primary_key=True),
-)
+users_servers_association_table = create_association_table("users_servers_association_table", "server", "user")
+admins_servers_association_table = create_association_table("admins_servers_association_table", "server", "user")
+emotes_servers_association_table = create_association_table("emotes_servers_association_table", "server", "emote")
 
 
 class Server(Base):

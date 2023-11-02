@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine, Engine
 
-from motey.infrastructure.database.dsn import build_dsn
+from motey.database.dsn import build_dsn
 
 
 def get_db() -> Engine:

@@ -1,4 +1,4 @@
-from motey.infrastructure.config import Config
+from motey.config import Config
 
 
 def build_dsn(config: Config = Config()) -> str:

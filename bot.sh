@@ -4,4 +4,4 @@ set -o allexport
 source .env
 set +o allexport
 
-python -m motey.infrastructure.discord.bot
+python -m motey.discord.bot

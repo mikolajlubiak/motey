@@ -3,10 +3,10 @@ import nextcord
 from sqlalchemy import select, update, exists
 from sqlalchemy.orm import Session
 
-from motey.infrastructure.database.storage import EmoteStorage
-from motey.infrastructure.database.tables import User
-from motey.infrastructure.database.engine import get_db
-from motey.infrastructure.config import Config
+from motey.database.storage import EmoteStorage
+from motey.database.tables import User
+from motey.database.engine import get_db
+from motey.config import Config
 
 
 class MoteyClient(nextcord.Client):

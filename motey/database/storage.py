@@ -3,7 +3,7 @@ from typing import Optional, List
 from sqlalchemy import select, exists
 from sqlalchemy.orm import Session
 
-from motey.infrastructure.database.tables import Emote, Server, User
+from motey.database.tables import Emote, Server, User
 
 
 class EmoteStorage:

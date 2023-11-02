@@ -3,7 +3,7 @@ import uuid
 from io import BufferedReader
 from pathlib import Path
 
-from motey.infrastructure.config import Config
+from motey.config import Config
 
 
 class InvalidFileExtension(Exception):

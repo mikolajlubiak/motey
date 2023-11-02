@@ -1,8 +1,8 @@
 from aiohttp.web import Application
 from aiohttp import web
-from motey.infrastructure.config import Config
+from motey.config import Config
 
-from motey.infrastructure.http.views import list_emotes, index, process_oauth, process_upload, upload
+from motey.http.views import list_emotes, index, process_oauth, process_upload, upload
 
 
 def setup_routes(app: Application, config: Config = Config()) -> None:

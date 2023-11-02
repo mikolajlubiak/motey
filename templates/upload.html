@@ -7,6 +7,7 @@
         <label for="file" class="label small_font_label"><span>Choose a file <img src="{{ url('static', filename='upload.png') }}" style="width: 5vh; vertical-align:text-bottom;"></span></label>
         <input class="empty" type="file" name="emote" id="file" required>
         <br/><br/>
+		<input type="hidden" name="{{ field_name }}" value="{{ token }}"/>
         <label for="submit" class="label"><span>Upload</span></label>
         <input class="empty" type="submit" id="submit">
     </form>

@@ -1,7 +1,8 @@
 import aiohttp_jinja2
 from aiohttp import web
 import aiohttp_session
-from motey.infrastructure.config import Config
+import aiohttp_csrf
+from motey.config import Config
 
 
 def _create_error_middleware(overrides):
@@ -47,4 +48,5 @@ def setup_middlewares(app: web.Application) -> None:
         500: handle_500
     })
     app.middlewares.append(error_middleware)
+    app.middlewares.append(aiohttp_csrf.csrf_middleware)
     app.middlewares.append(check_login)

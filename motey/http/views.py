@@ -2,15 +2,16 @@ import aiohttp
 from aiohttp import web
 import aiohttp_jinja2
 import aiohttp_session
+import aiohttp_csrf
 
 from sqlalchemy import select, exists
 from sqlalchemy.orm import Session
 
-from motey.infrastructure.database.storage import EmoteStorage
-from motey.infrastructure.filesystem import EmoteFileWriter
-from motey.infrastructure.database.tables import User, Server
+from motey.database.storage import EmoteStorage
+from motey.filesystem import EmoteFileWriter
+from motey.database.tables import User, Server
 
-from motey.infrastructure.config import Config
+from motey.config import Config
 
 routes = web.RouteTableDef()
 
@@ -33,7 +34,9 @@ async def index(request: web.Request):
 
 @aiohttp_jinja2.template('upload.html')
 async def upload(request: web.Request):
-    return None
+    token = await aiohttp_csrf.generate_token(request)
+
+    return {'field_name': Config.form_field_name, 'token': token}
 
 
 @aiohttp_jinja2.template('upload.html')
@@ -52,15 +55,16 @@ async def process_upload(request: web.Request):
     if author.banned is True:
         return {'error_message': 'User banned from uploading emotes'}
 
+    emote_storage = EmoteStorage(request.app['db'])
+    if emote_storage.emote_exists(emote_name):
+        return {'error_message': 'Emote with this name already exists'}
+
     file_writer = EmoteFileWriter(emote_name, emote.filename, emote.file)
     if file_writer.extension_valid:
         file_writer.save_to_filesystem()
     else:
         return {'error_message': 'File extension invalid'}
 
-    emote_storage = EmoteStorage(request.app['db'])
-    if emote_storage.emote_exists(emote_name):
-        return {'error_message': 'Emote with this name already exists'}
     emote_storage.add_emote(emote_name, str(file_writer.path), author)
 
     raise web.HTTPFound(location='/upload')

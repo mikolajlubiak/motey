@@ -1,3 +1,7 @@
+nohup.out
+motey/cookie_encryption_key.dat
+motey/secret_phrase.dat
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
