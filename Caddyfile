@@ -1,0 +1,21 @@
+motey.k.vu {
+        encode zstd gzip
+        reverse_proxy :8000
+        header {
+                # disable FLoC tracking
+                Permissions-Policy interest-cohort=()
+ 
+                # enable HSTS
+                Strict-Transport-Security max-age=31536000;
+ 
+                # disable clients from sniffing the media type
+                X-Content-Type-Options nosniff
+ 
+                # clickjacking protection
+                X-Frame-Options DENY
+ 
+                # keep referrer data off of HTTP connections
+                Referrer-Policy no-referrer-when-downgrade
+        }
+}
+
