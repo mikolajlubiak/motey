@@ -14,7 +14,7 @@ MarkupSafe==2.1.3
 multidict==6.0.4
 mysql-connector-python==8.2.0
 nextcord==2.6.0
-protobuf==4.25.0
+protobuf==4.21.12
 PyMySQL==1.1.0
 typing_extensions==4.8.0
 SQLAlchemy==2.0.23
