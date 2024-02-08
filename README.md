@@ -4,42 +4,38 @@
 
 ## Running web server
 
-First of all, create the .env file:
+Create .env file from template:
 ```shell
 cp .env.dist .env
 ```
-And replace default parameters with your own configuration
+Replace default variables with your own (you can leave everything, except MYSQL\_ROOT\_PASSWORD, as is)
 
-Start database with docker compose (add `-d` flag to run as daemon - in background):
+Start database with docker/podman compose:
 ```shell
-docker compose up
+podman-compose up -d
 ```
 
-Install all required packages (virtual environment usage recommended):
+Install all required packages (virtual environment usage is recommended):
 ```shell
-# recommended
+# recommended to run before pip install
 virtualenv .venv
 source .venv/bin/activate
-# required
+# pip install is required
 pip install -r requirements.txt
 ```
 
-(Optional) Set FOREIGN_KEY_CHECKS to 0 (need because otherwise the database wouldn't want to drop tables because of foreign keys):
+Initialize database:
 ```shell
-./foreign_key_checks.sh
+./alembic.sh
 ```
 
-Initialize database (note: if "motey" database already exists, this will drop all existing tables):
+Start web server:
 ```shell
-./init_database.sh
+nohup ./gunicorn.sh > ./gunicorn.log 2>&1 &
+sudo caddy start --config ./Caddyfile
 ```
 
-Now you can start HTTP server (add `&` to run in background):
+Start Discord bot:
 ```shell
-./run.sh
-```
-
-And / or Discord bot (add `&` to run in background):
-```shell
-./bot.sh
+nohup ./bot.sh > ./bot.log 2>&1 &
 ```
