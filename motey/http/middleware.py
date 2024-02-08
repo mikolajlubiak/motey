@@ -24,16 +24,16 @@ def _create_error_middleware(overrides):
 
 
 async def handle_404(request):
-    return aiohttp_jinja2.render_template('404.html', request, {}, status=404)
+    return aiohttp_jinja2.render_template("404.html", request, {}, status=404)
 
 
 async def handle_500(request):
-    return aiohttp_jinja2.render_template('500.html', request, {}, status=500)
+    return aiohttp_jinja2.render_template("500.html", request, {}, status=500)
 
 
 @web.middleware
 async def check_login(request, handler):
-    if request.path == '/upload':
+    if request.path == "/upload":
         session = await aiohttp_session.get_session(request)
         discord_id = session.get("discord_id")
         if not discord_id:
@@ -43,10 +43,7 @@ async def check_login(request, handler):
 
 
 def setup_middlewares(app: web.Application) -> None:
-    error_middleware = _create_error_middleware({
-        404: handle_404,
-        500: handle_500
-    })
+    error_middleware = _create_error_middleware({404: handle_404, 500: handle_500})
     app.middlewares.append(error_middleware)
     app.middlewares.append(aiohttp_csrf.csrf_middleware)
     app.middlewares.append(check_login)

@@ -11,9 +11,15 @@ class InvalidFileExtension(Exception):
 
 
 class EmoteFileWriter:
-    VALID_EXTENSIONS = ('jpg', 'png', 'webp', 'gif')
+    VALID_EXTENSIONS = ("jpg", "png", "webp", "gif")
 
-    def __init__(self, emote_name: str, file_name: str, reader: BufferedReader, config: Config = Config()):
+    def __init__(
+        self,
+        emote_name: str,
+        file_name: str,
+        reader: BufferedReader,
+        config: Config = Config(),
+    ):
         self._emote_name = emote_name
         self._file_name = file_name
         self._reader = reader
@@ -34,16 +40,16 @@ class EmoteFileWriter:
             raise InvalidFileExtension
         file_content = self._reader.read()
         path = self._build_file_path()
-        with open(path, 'wb') as output_file:
+        with open(path, "wb") as output_file:
             output_file.write(file_content)
 
     def rollback(self) -> None:
-        path = self._build_file_location()
+        path = self._build_file_path()
         os.remove(path)
 
     def _build_file_path(self) -> Path:
         extension = self._get_file_extension()
-        return self._emotes_dir / f'{self._emote_uuid}.{extension}'
+        return self._emotes_dir / f"{self._emote_uuid}.{extension}"
 
     def _get_file_extension(self) -> str:
-        return self._file_name.split('.')[-1]
+        return self._file_name.split(".")[-1]
