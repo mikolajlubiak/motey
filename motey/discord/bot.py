@@ -23,7 +23,9 @@ class MoteyClient(nextcord.Client):
         if message.content == "whoami" and message.author.id in creators:
             await message.reply("root")
         with Session(get_db()) as db_session:
-            if not db_session.query(exists().where(User.discord_id == message.author.id)).scalar():
+            if not db_session.query(
+                exists().where(User.discord_id == message.author.id)
+            ).scalar():
                 user = User(discord_id=message.author.id, name=message.author.name)
                 db_session.add(user)
                 db_session.commit()
@@ -35,10 +37,14 @@ class MoteyClient(nextcord.Client):
         emote = self._emotes.get_emote_by_name(message.content)
         if emote is not None:
             await message.delete()
-            with open(emote.path, 'rb') as f:
+            with open(emote.path, "rb") as f:
                 picture = nextcord.File(f)
                 webhook = await message.channel.create_webhook(name=message.author.name)
-                await webhook.send(file=picture, username=message.author.name, avatar_url=message.author.avatar)
+                await webhook.send(
+                    file=picture,
+                    username=message.author.name,
+                    avatar_url=message.author.avatar,
+                )
                 await webhook.delete()
 
 
@@ -48,7 +54,9 @@ client = MoteyClient()
 @client.slash_command()
 async def toggle_replacing(interaction: nextcord.Interaction):
     with Session(get_db()) as db_session:
-        if not db_session.query(exists().where(User.discord_id == interaction.user.id)).scalar():
+        if not db_session.query(
+            exists().where(User.discord_id == interaction.user.id)
+        ).scalar():
             user = User(discord_id=interaction.user.id, name=interaction.user.name)
             db_session.add(user)
             db_session.commit()
@@ -60,11 +68,14 @@ async def toggle_replacing(interaction: nextcord.Interaction):
             update(User)
             .where(User.discord_id == interaction.user.id)
             .values(replace=not author.replace)
-            )
+        )
         author.replace = not author.replace
         db_session.execute(stmt)
         db_session.commit()
-    await interaction.response.send_message(f"Replacing messages with emotes is now set to: {author.replace}")
+    await interaction.response.send_message(
+        f"Replacing messages with emotes is now set to: {author.replace}"
+    )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     client.run(Config.token)

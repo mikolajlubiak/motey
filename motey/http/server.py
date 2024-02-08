@@ -15,7 +15,7 @@ from motey.http.routing import setup_routes
 
 async def _attach_database_context(app: web.Application):
     engine = get_db()
-    app['db'] = engine
+    app["db"] = engine
     yield
 
 
@@ -23,10 +23,12 @@ def _build_jinja_loader(config: Config = Config()) -> jinja2.FileSystemLoader:
     return jinja2.FileSystemLoader(str(config.templates_dir))
 
 
-def prepare_app(config: Config = Config()) -> None:
+def prepare_app(config: Config = Config()) -> web.Application:
     app = web.Application()
     csrf_policy = aiohttp_csrf.policy.FormPolicy(config.form_field_name)
-    csrf_storage = aiohttp_csrf.storage.CookieStorage(config.cookie_name, secret_phrase=config.secret_phrase)
+    csrf_storage = aiohttp_csrf.storage.CookieStorage(
+        config.cookie_name, secret_phrase=config.secret_phrase
+    )
     aiohttp_csrf.setup(app, policy=csrf_policy, storage=csrf_storage)
     aiohttp_jinja2.setup(app, loader=_build_jinja_loader())
     setup_routes(app)
@@ -36,7 +38,7 @@ def prepare_app(config: Config = Config()) -> None:
     logging.basicConfig(level=logging.DEBUG)
     return app
 
+
 def run_app(config: Config = Config()):
     app = prepare_app()
     web.run_app(app, host=config.http_host, port=config.http_port)
-
