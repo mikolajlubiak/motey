@@ -17,7 +17,7 @@ nextcord==2.6.0
 protobuf==4.21.12
 PyMySQL==1.1.0
 typing_extensions==4.9.0
-SQLAlchemy==2.0.26
+SQLAlchemy==2.0.27
 yarl==1.9.4
 cryptography==42.0.2
 aiohttp-csrf==0.1.1
