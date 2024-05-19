@@ -21,6 +21,6 @@ SQLAlchemy==2.0.30
 yarl==1.9.4
 cryptography==42.0.5
 aiohttp-csrf==0.1.1
-gunicorn==21.2.0
+gunicorn==22.0.0
 alembic==1.13.1
 
