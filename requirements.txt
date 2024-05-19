@@ -8,7 +8,7 @@ attrs==23.2.0
 charset-normalizer==3.3.2
 frozenlist==1.4.1
 greenlet==3.0.3
-idna==3.6
+idna==3.7
 Jinja2==3.1.4
 MarkupSafe==2.1.5
 multidict==6.0.5
