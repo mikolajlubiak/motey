@@ -22,5 +22,5 @@ yarl==1.9.4
 cryptography==42.0.8
 aiohttp-csrf==0.1.1
 gunicorn==22.0.0
-alembic==1.13.1
+alembic==1.13.2
 
