@@ -19,7 +19,7 @@ PyMySQL==1.1.1
 typing_extensions==4.12.2
 SQLAlchemy==2.0.31
 yarl==1.9.4
-cryptography==42.0.8
+cryptography==43.0.0
 aiohttp-csrf==0.1.1
 gunicorn==22.0.0
 alembic==1.13.2
