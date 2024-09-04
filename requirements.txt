@@ -18,7 +18,7 @@ protobuf==5.28.0
 PyMySQL==1.1.1
 typing_extensions==4.12.2
 SQLAlchemy==2.0.33
-yarl==1.9.7
+yarl==1.9.8
 cryptography==43.0.1
 aiohttp-csrf==0.1.1
 gunicorn==23.0.0
