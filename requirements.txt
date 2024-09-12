@@ -7,7 +7,7 @@ async-timeout==4.0.3
 attrs==24.2.0
 charset-normalizer==3.3.2
 frozenlist==1.4.1
-greenlet==3.0.3
+greenlet==3.1.0
 idna==3.8
 Jinja2==3.1.4
 MarkupSafe==2.1.5
