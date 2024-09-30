@@ -1,4 +1,4 @@
-aiohttp==3.10.6
+aiohttp==3.10.8
 aiohttp-jinja2==1.6
 aiohttp-session==2.12.1
 aiomysql==0.2.0
