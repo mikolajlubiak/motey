@@ -22,6 +22,7 @@ virtualenv .venv
 source .venv/bin/activate
 # pip install is required
 pip install -r requirements.txt
+pip install --upgrade setuptools
 ```
 
 Initialize database:
