@@ -8,11 +8,11 @@ Create .env file from template:
 ```shell
 cp .env.dist .env
 ```
-Replace default variables with your own (you can leave everything, except MYSQL\_ROOT\_PASSWORD, as is)
+Replace default variables with your own
 
 Start database with docker/podman compose:
 ```shell
-podman-compose up -d
+sudo docker-compose up -d
 ```
 
 Install all required packages (virtual environment usage is recommended):
@@ -33,7 +33,7 @@ Initialize database:
 Start web server:
 ```shell
 nohup ./gunicorn.sh > ./gunicorn.log 2>&1 &
-sudo caddy start --config ./Caddyfile
+sudo caddy start --config ./Caddyfile # Change moteybot.com to your domain
 ```
 
 Start Discord bot:
