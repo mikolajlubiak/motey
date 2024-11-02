@@ -19,9 +19,7 @@ class MoteyClient(nextcord.Client):
     async def on_message(self, message):
         if message.author.bot:
             return
-        creators = [977864831568850955, 633222053050318855]
-        if message.content == "whoami" and message.author.id in creators:
-            await message.reply("root")
+
         with Session(get_db()) as db_session:
             if not db_session.query(
                 exists().where(User.discord_id == message.author.id)
@@ -29,12 +27,16 @@ class MoteyClient(nextcord.Client):
                 user = User(discord_id=message.author.id, name=message.author.name)
                 db_session.add(user)
                 db_session.commit()
+
         with Session(get_db()) as db_session:
             stmt = select(User).where(User.discord_id == message.author.id)
             author = db_session.scalars(stmt).one()
+
         if author.replace is False:
             return
+
         emote = self._emotes.get_emote_by_name(message.content)
+
         if emote is not None:
             await message.delete()
             with open(emote.path, "rb") as f:
@@ -60,9 +62,11 @@ async def toggle_replacing(interaction: nextcord.Interaction):
             user = User(discord_id=interaction.user.id, name=interaction.user.name)
             db_session.add(user)
             db_session.commit()
+
     with Session(get_db()) as db_session:
         stmt = select(User).where(User.discord_id == interaction.user.id)
         author = db_session.scalars(stmt).one()
+
     with Session(get_db()) as db_session:
         stmt = (
             update(User)
@@ -72,6 +76,7 @@ async def toggle_replacing(interaction: nextcord.Interaction):
         author.replace = not author.replace
         db_session.execute(stmt)
         db_session.commit()
+
     await interaction.response.send_message(
         f"Replacing messages with emotes is now set to: {author.replace}"
     )

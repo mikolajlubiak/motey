@@ -21,7 +21,7 @@ class Base(DeclarativeBase):
     pass
 
 
-def create_association_table(name: str, column1: str, column2: str) -> func:
+def create_association_table(name: str, column1: str, column2: str) -> Table:
     return Table(
         name,
         Base.metadata,
@@ -46,12 +46,15 @@ class Server(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(32), nullable=False)
     guild: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
+
     server_users: Mapped[List["User"]] = relationship(
         back_populates="user_servers", secondary=users_servers_association_table
     )
+
     server_admins: Mapped[List["User"]] = relationship(
         back_populates="admin_servers", secondary=admins_servers_association_table
     )
+
     server_emotes: Mapped[List["Emote"]] = relationship(
         back_populates="emote_servers", secondary=emotes_servers_association_table
     )
@@ -62,15 +65,17 @@ class User(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(32), nullable=False, unique=True)
     discord_id: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
-    user_servers: Mapped[Optional[List["Server"]]] = relationship(
-        back_populates="server_users", secondary=users_servers_association_table
-    )
-    admin_servers: Mapped[Optional[List["Server"]]] = relationship(
-        back_populates="server_admins", secondary=admins_servers_association_table
-    )
     user_emotes: Mapped[Optional[List["Emote"]]] = relationship(back_populates="author")
     replace: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     banned: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+
+    user_servers: Mapped[Optional[List["Server"]]] = relationship(
+        back_populates="server_users", secondary=users_servers_association_table
+    )
+
+    admin_servers: Mapped[Optional[List["Server"]]] = relationship(
+        back_populates="server_admins", secondary=admins_servers_association_table
+    )
 
 
 class Emote(Base):
