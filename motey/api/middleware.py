@@ -24,12 +24,13 @@ def _create_error_middleware(overrides):
 
 @web.middleware
 async def check_login(request, handler):
-    session = await aiohttp_session.get_session(request)
-    discord_id = session.get("discord_id")
+    if request.path != "/api/v1/process_oauth":
+        session = await aiohttp_session.get_session(request)
+        discord_id = session.get("discord_id")
 
-    if not discord_id:
-        url = Config.auth_start_url
-        raise web.HTTPFound(location=url)
+        if not discord_id:
+            url = Config.auth_start_url
+            raise web.HTTPFound(location=url)
 
     return await handler(request)
 

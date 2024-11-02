@@ -18,14 +18,28 @@ routes = web.RouteTableDef()
 async def get_emote_list(request: web.Request):
     emotes = EmoteStorage(request.app["db"]).fetch_all_emotes()
 
-    return web.json_response(emotes)
+    names = []
+    paths = []
+
+    for emote in emotes:
+        names.append(emote.name)
+        paths.append(emote.path)
+
+    return web.json_response((names, paths))
 
 
 async def get_server_list(request: web.Request):
     session = await aiohttp_session.get_session(request)
-    user_severs = UserStorage(session["discord_id"]).get_user_servers()
+    user_servers = UserStorage(request.app["db"]).get_user_servers(discord_id=session["discord_id"])
 
-    return web.json_response(user_severs)
+    guilds = []
+    names = []
+
+    for server in user_servers:
+        guilds.append(server.guild)
+        names.append(server.name)
+
+    return web.json_response((guilds, names))
 
 
 async def get_csrf_token(request: web.Request):
@@ -126,7 +140,8 @@ async def process_oauth(request: web.Request):
             guild_id = int(guild["id"])
             guild_name = guild["name"]
 
-            server = select(Server).where(Server.guild == guild_id).one()
+            stmt = select(Server).where(Server.guild == guild_id)
+            server = db_session.scalars(stmt).one()
 
             if server is None:
                 server = Server(guild=guild_id, name=guild_name)
@@ -134,10 +149,17 @@ async def process_oauth(request: web.Request):
                 db_session.add(server)
                 db_session.commit()
             else:
-                if not server.server_users.any(discord_id=session["discord_id"]):
-                    server.server_users.append(user)
-                    db_session.commit()
+                if not db_session.query(
+                    exists().where(
+                        Server.guild == guild_id,
+                        Server.server_users.any(discord_id=session["discord_id"]),
+                        )
+                    ).scalar():
+                        server.server_users.append(user)
+                        db_session.commit()
 
                 if server.name != guild_name:
                     server.name = guild_name
                     db_session.commit()
+
+    raise web.HTTPFound(location="/")
