@@ -26,7 +26,7 @@ class EmoteStorage:
             db_session.add(emote)
             db_session.commit()
 
-    def get_emote_by_name(self, name: str) -> Optional[Emote]:
+    def get_emote_by_name(self, name: str) -> List[Emote] | None:
         stmt = select(Emote).where(Emote.name == name)
         with Session(self._db) as db_session:
             try:

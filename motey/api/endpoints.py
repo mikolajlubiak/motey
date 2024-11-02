@@ -126,7 +126,7 @@ async def process_oauth(request: web.Request):
             guild_id = int(guild["id"])
             guild_name = guild["name"]
 
-            server = select(Server).where(Server.guild == guild_id)
+            server = select(Server).where(Server.guild == guild_id).one()
 
             if server is None:
                 server = Server(guild=guild_id, name=guild_name)
