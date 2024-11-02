@@ -4,4 +4,4 @@ set -o allexport
 source .env
 set +o allexport
 
-python -m motey.database.init_db
+python -m motey

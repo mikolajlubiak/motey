@@ -1,4 +1,4 @@
 #!/bin/sh
 
-ps aux | grep gunicorn | grep lesson4future | awk '{ print $2 }' | xargs kill -HUP
+ps aux | grep gunicorn | grep motey | awk '{ print $2 }' | xargs kill -HUP
 
