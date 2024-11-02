@@ -1,6 +1,7 @@
 import aiohttp
 from aiohttp import web
 import aiohttp_session
+import aiohttp_csrf
 
 from sqlalchemy import select, exists
 from sqlalchemy.orm import Session
@@ -25,6 +26,12 @@ async def get_server_list(request: web.Request):
     user_severs = UserStorage(session["discord_id"]).get_user_servers()
 
     return web.json_response(user_severs)
+
+
+async def get_csrf_token(request: web.Request):
+    token = await aiohttp_csrf.generate_token(request)
+
+    return web.json_response({"field_name": Config.form_field_name, "token": token})
 
 
 async def process_upload(request: web.Request):
