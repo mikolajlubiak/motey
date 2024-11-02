@@ -11,13 +11,10 @@ class EmoteStorage:
     def __init__(self, database):
         self._db = database
 
-    def fetch_all_emotes(self) -> List[Tuple[Emote, str]]:
+    def fetch_all_emotes(self) -> List[Tuple[Emote]]:
         with Session(self._db) as db_session:
             emotes = db_session.scalars(select(Emote)).all()
-            out = []
-            for emote in emotes:
-                out.append((emote, emote.author.name))
-            return out
+            return emotes
 
     def emote_exists(self, name: str) -> bool:
         with Session(self._db) as db_session:

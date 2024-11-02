@@ -83,8 +83,9 @@ class Emote(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     author_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     author: Mapped["User"] = relationship(back_populates="user_emotes")
+    name: Mapped[str] = mapped_column(String(32), nullable=False)
+    path: Mapped[str] = mapped_column(String(128), nullable=False, unique=True)
+
     emote_servers: Mapped[Optional[List["Server"]]] = relationship(
         back_populates="server_emotes", secondary=emotes_servers_association_table
     )
-    name: Mapped[str] = mapped_column(String(32), nullable=False)
-    path: Mapped[str] = mapped_column(String(128), nullable=False, unique=True)
