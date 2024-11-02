@@ -1,3 +1,5 @@
+from os import path
+
 import aiohttp
 from aiohttp import web
 import aiohttp_session
@@ -23,7 +25,7 @@ async def get_emote_list(request: web.Request):
 
     for emote in emotes:
         names.append(emote.name)
-        paths.append(emote.path)
+        paths.append(path.relpath(emote.path, Config.project_root))
 
     return web.json_response((names, paths))
 
