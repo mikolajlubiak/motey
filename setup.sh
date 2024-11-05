@@ -8,4 +8,5 @@ pip install --upgrade setuptools
 
 # Database
 sudo docker-compose up -d
+sleep 1 # Wait for the database to launch inside the container
 ./alembic.sh
