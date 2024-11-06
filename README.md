@@ -4,6 +4,12 @@
 
 ## Setup
 
+* Create .env file from template:
+```shell
+cp .env.dist .env
+```
+Replace default variables with your own
+
 * Run the script:
 ```shell
 ./setup.sh
