@@ -20,6 +20,7 @@ source run_local.sh
 
 ### Production:
 
+* Change the domain in `Caddyfile`
 * Run the script:
 ```shell
 ./run_prod.sh
