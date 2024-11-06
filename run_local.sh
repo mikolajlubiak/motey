@@ -3,7 +3,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     exit
 fi
 
-./alembic.sh
+./alembic.sh >> logs/alembic.out 2>> logs/alembic.err
 
 source .venv/bin/activate
 
