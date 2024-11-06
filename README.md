@@ -4,48 +4,23 @@
 
 ## Setup
 
-* Create .env file from template:
+* Run the script:
 ```shell
-cp .env.dist .env
+./setup.sh
 ```
-Replace default variables with your own
-
-* Install all required packages (virtual environment usage is recommended):
-```shell
-# recommended to run before pip install
-virtualenv .venv
-source .venv/bin/activate
-# pip install is required
-pip install -r requirements.txt
-pip install --upgrade setuptools
-```
-
-* Initialize database:
-```shell
-./alembic.sh
-```
-
 
 ## Run
 
-* Start database with docker/podman compose:
+### Local/Testing:
+
+* Source the script:
 ```shell
-sudo docker-compose up -d
+source run_local.sh
 ```
 
-* Get into virtual enviroment
-```shell
-source .venv/bin/activate
-```
+### Production:
 
-* Start web server:
+* Run the script:
 ```shell
-nohup ./gunicorn.sh > ./gunicorn.log 2>&1 &
-sudo caddy start --config ./Caddyfile # Change moteybot.com to your domain
+./run_prod.sh
 ```
-
-* Start bot:
-```shell
-nohup ./bot.sh > ./bot.log 2>&1 &
-```
-
