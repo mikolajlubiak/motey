@@ -2,6 +2,7 @@ version: "3"
 services:
   db:
     image: mariadb
+    container_name: motey_db_1
     volumes:
       - db_data:/var/lib/mysql
     env_file:
