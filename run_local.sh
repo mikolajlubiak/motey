@@ -1,13 +1,10 @@
-#!/bin/bash
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    echo -e "This script must be sourced, run it with \033[1msource run_local.sh\033[0m"
+    exit
+fi
 
-# Database
-sudo docker-compose up -d
-sleep 1 # Wait for the database to launch inside the container
+./alembic.sh >> logs/alembic.out 2>> logs/alembic.err
 
-# Web server
 source .venv/bin/activate
-nohup ./website_local.sh > ./website_local.log 2>&1 &
 
-# Bot
-nohup ./bot.sh > ./bot.log 2>&1 &
-
+tmux new "source tmux-run_local.sh"
