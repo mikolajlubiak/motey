@@ -14,7 +14,7 @@ try=0
 
 while [ $success = 0 ]; do
     try=$(($try+1))
-    ./alembic.sh && success=1
+    ./alembic.sh >> logs/alembic.out 2>> logs/alembic.err && success=1
 
     if [ $success = 0 ]; then
         if (($try > 9)); then
