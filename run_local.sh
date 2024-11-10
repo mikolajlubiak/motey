@@ -3,8 +3,20 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     exit
 fi
 
+sync=false
+
+for arg in "$@"; do
+  if [[ $arg == "--sync" || $arg == "-s" ]]; then
+    sync=true
+  fi
+done
+
 ./alembic.sh >> logs/alembic.out 2>> logs/alembic.err
 
 source .venv/bin/activate
 
-tmux new "source tmux-run_local.sh"
+if $sync; then
+    tmux new "source tmux-run_local.sh --sync"
+else
+    tmux new "source tmux-run_local.sh"
+fi
