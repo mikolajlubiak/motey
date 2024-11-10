@@ -11,7 +11,7 @@ idna==3.10
 MarkupSafe==3.0.2
 multidict==6.1.0
 PyMySQL==1.1.1
-nextcord==2.6.0
+discord.py==2.4.0
 protobuf==5.28.3
 typing_extensions==4.12.2
 SQLAlchemy==2.0.36
