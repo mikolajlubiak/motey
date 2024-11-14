@@ -10,26 +10,29 @@ from motey.database.engine import get_db
 from motey.filesystem import AsyncEmoteWriter
 from motey.config import Config
 
-def main(sync = False):
+def main():
     intents = discord.Intents.default()
     intents.message_content = True
     client = discord.Client(intents = intents)
     tree = app_commands.CommandTree(client)
     emotes = EmoteStorage(get_db())
 
+    def is_admin(interaction: discord.Interaction) -> bool:
+        with Session(get_db()) as db_session:
+            stmt = select(User).where(User.discord_id == interaction.user.id)
+            author = db_session.scalars(stmt).one()
+            return interaction.guild.id in author.admin_servers
+
     @client.event
     async def on_ready():
-        if sync:
-            print("Synchronizing slash commands")
-            await tree.sync()
-        else: print("Skipping slash command synchronization, while it's not recommended you can enable it with the --sync flag.")
-
         print(f"loged in as {client.user}")
 
     @client.event
-    async def on_message(message):
+    async def on_message(message: discord.Message):
         if message.author.bot:
                 return
+
+        if message.content == "whoami" and message.author.id in [977864831568850955, 633222053050318855, 267631595425366018, 278934243516874752, 776867547404173362]: await message.reply("root")
 
         with Session(get_db()) as db_session:
             if not db_session.query(
@@ -61,7 +64,7 @@ def main(sync = False):
                 await webhook.delete()
 
     @tree.command(name="toggle_replacing", description="Tells the bot if you want to have your messages replaced with images.")
-    async def toggle_replacing(interaction):
+    async def toggle_replacing(interaction: discord.Interaction):
         with Session(get_db()) as db_session:
             if not db_session.query(
                 exists().where(User.discord_id == interaction.user.id)
@@ -89,7 +92,7 @@ def main(sync = False):
         )
 
     @tree.command(name="add_emote", description="Add a new emote.")
-    async def add_emote(interaction, emote_name: str, image: discord.Attachment):
+    async def add_emote(interaction: discord.Interaction, emote_name: str, image: discord.Attachment):
         if not emote_name or not image:
             await interaction.response.send_message("Failed to add the emote, missing name or file.")
             return
@@ -116,6 +119,12 @@ def main(sync = False):
 
         emotes.add_emote(emote_name, str(file_writer.path), author)
         await interaction.response.send_message("Emote **"+emote_name+"** added successfuly!")
+
+    @tree.command(name="sync_slash_commands", description="Synchronize the bots slash commands.")
+    @app_commands.check(is_admin)
+    async def sync(interaction: discord.Interaction):
+        await tree.sync()
+        await interaction.response.send_message("Slash commands synchronized.")
 
     client.run(Config.token)
 
