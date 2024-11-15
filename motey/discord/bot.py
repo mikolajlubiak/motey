@@ -17,11 +17,20 @@ def main():
     tree = app_commands.CommandTree(client)
     emotes = EmoteStorage(get_db())
 
-    def is_admin(interaction: discord.Interaction) -> bool:
+    async def is_admin(interaction: discord.Interaction) -> bool:
         with Session(get_db()) as db_session:
             stmt = select(User).where(User.discord_id == interaction.user.id)
             author = db_session.scalars(stmt).one()
-            return interaction.guild.id in author.admin_servers
+            result = interaction.guild.id in author.admin_servers
+            if not result: await interaction.response.send_message("You are not and administrator.")
+            return result
+
+    async def is_not_banned(interaction: discord.Interaction) -> bool:
+        with Session(get_db()) as db_session:
+            stmt = select(User).where(User.discord_id == interaction.user.id)
+            author = db_session.scalars(stmt).one()
+            if author.banned: await interaction.response.send_message("Failed to add the emote, you were banned from uploading new emotes.")
+            return not author.banned
 
     @client.event
     async def on_ready():
@@ -92,6 +101,7 @@ def main():
         )
 
     @tree.command(name="add_emote", description="Add a new emote.")
+    @app_commands.check(is_not_banned)
     async def add_emote(interaction: discord.Interaction, emote_name: str, image: discord.Attachment):
         if not emote_name or not image:
             await interaction.response.send_message("Failed to add the emote, missing name or file.")
@@ -100,10 +110,6 @@ def main():
         with Session(get_db()) as db_session:
             stmt = select(User).where(User.discord_id == interaction.user.id)
             author = db_session.scalars(stmt).one()
-
-        if author.banned:
-            await interaction.response.send_message("Failed to add the emote, you were banned from uploading new emotes.")
-            return
 
         if emotes.emote_exists(emote_name):
             await interaction.response.send_message("Failed to add the emote, an emote with this name already exists.")
