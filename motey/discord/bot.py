@@ -22,7 +22,7 @@ def main():
             stmt = select(User).where(User.discord_id == interaction.user.id)
             author = db_session.scalars(stmt).one()
             result = interaction.guild.id in author.admin_servers
-            if not result: await interaction.response.send_message("You are not and administrator.")
+            if not result: await interaction.response.send_message("You are not an administrator.")
             return result
 
     async def is_not_banned(interaction: discord.Interaction) -> bool:
