@@ -124,7 +124,7 @@ def main():
             return
 
         emotes.add_emote(emote_name, str(file_writer.path), author)
-        await interaction.response.send_message("Emote **"+emote_name+"** added successfuly!")
+        await interaction.response.send_message(f"Emote **{emote_name}** added successfuly!")
 
     @tree.command(name="sync_slash_commands", description="Synchronize the bots slash commands.")
     @app_commands.check(is_admin)
