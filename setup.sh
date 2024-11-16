@@ -30,3 +30,5 @@ while [ $success = 0 ]; do
         echo "Connecting to the database was successful!"
     fi
 done
+
+sudo docker-compose stop

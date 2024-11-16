@@ -53,3 +53,14 @@ class EmoteFileWriter:
 
     def _get_file_extension(self) -> str:
         return self._file_name.split(".")[-1]
+
+class AsyncEmoteWriter(EmoteFileWriter):
+    async def save_to_filesystem(self) -> None:
+        if not self.extension_valid:
+            raise InvalidFileExtension
+        file_content = await self._reader.read()
+        path = self._build_file_path()
+        if not os.path.exists(self._emotes_dir):
+            os.makedirs(self._emotes_dir)
+        with open(path, "wb") as output_file:
+            output_file.write(file_content)
