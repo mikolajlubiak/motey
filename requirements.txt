@@ -20,4 +20,4 @@ cryptography==44.0.0
 aiohttp-csrf==0.1.1
 gunicorn==23.0.0
 alembic==1.14.0
-
+audioop-lts==0.2.1
