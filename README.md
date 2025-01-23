@@ -8,7 +8,7 @@
 ```shell
 cp .env.dist .env
 ```
-Replace default variables with your own
+Replace default variables with your own, note that most default values will work just fine for local testing/development environments:
 
 * Run the script:
 ```shell

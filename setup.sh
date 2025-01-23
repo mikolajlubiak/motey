@@ -1,5 +1,7 @@
 #!/bin/bash
 
+docker volume ls | grep motey_db_data && (docker volume rm motey_db_data || (echo "Please stop and remove the currently running motey container and run the script again."; exit))
+
 # Python enviroment
 virtualenv .venv
 source .venv/bin/activate
