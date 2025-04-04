@@ -9,7 +9,7 @@ frozenlist==1.5.0
 greenlet==3.1.1
 idna==3.10
 MarkupSafe==3.0.2
-multidict==6.3.1
+multidict==6.3.2
 PyMySQL==1.1.1
 discord.py==2.5.2
 protobuf==6.30.2
