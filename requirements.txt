@@ -12,7 +12,7 @@ MarkupSafe==3.0.2
 multidict==6.5.0
 PyMySQL==1.1.1
 discord.py==2.5.2
-protobuf==6.30.2
+protobuf==6.31.1
 typing_extensions==4.13.2
 SQLAlchemy==2.0.40
 yarl==1.20.0
