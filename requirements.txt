@@ -13,7 +13,7 @@ multidict==6.5.0
 PyMySQL==1.1.1
 discord.py==2.5.2
 protobuf==6.31.1
-typing_extensions==4.13.2
+typing_extensions==4.15.0
 SQLAlchemy==2.0.41
 yarl==1.20.0
 cryptography==45.0.4
