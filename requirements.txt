@@ -1,4 +1,4 @@
-aiohttp==3.13.2
+aiohttp==3.13.3
 aiohttp-session==2.12.1
 aiomysql==0.3.2
 aiosignal==1.3.2
