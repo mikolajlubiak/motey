@@ -8,7 +8,7 @@ charset-normalizer==3.4.2
 frozenlist==1.8.0
 greenlet==3.2.3
 idna==3.10
-MarkupSafe==3.0.2
+MarkupSafe==3.0.3
 multidict==6.5.0
 PyMySQL==1.1.1
 discord.py==2.5.2
