@@ -10,7 +10,7 @@ greenlet==3.2.3
 idna==3.10
 MarkupSafe==3.0.2
 multidict==6.5.0
-PyMySQL==1.1.1
+PyMySQL==1.1.2
 discord.py==2.5.2
 protobuf==6.33.5
 typing_extensions==4.15.0
