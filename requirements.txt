@@ -3,8 +3,8 @@ aiohttp-session==2.12.1
 aiomysql==0.3.2
 aiosignal==1.4.0
 async-timeout==5.0.1
-attrs==25.3.0
-charset-normalizer==3.4.4
+attrs==25.4.0
+charset-normalizer==3.4.2
 frozenlist==1.8.0
 greenlet==3.3.1
 idna==3.10
