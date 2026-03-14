@@ -18,6 +18,6 @@ SQLAlchemy==2.0.46
 yarl==1.22.0
 cryptography==46.0.5
 aiohttp-csrf==0.1.1
-gunicorn==23.0.0
-alembic==1.18.4
+gunicorn==25.0.3
+alembic==1.17.1
 audioop-lts==0.2.1
