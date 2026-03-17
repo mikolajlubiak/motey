@@ -6,7 +6,7 @@ async-timeout==5.0.1
 attrs==25.4.0
 charset-normalizer==3.4.2
 frozenlist==1.8.0
-greenlet==3.2.3
+greenlet==3.3.2
 idna==3.11
 MarkupSafe==3.0.2
 multidict==6.7.1
@@ -14,10 +14,10 @@ PyMySQL==1.1.1
 discord.py==2.7.1
 protobuf==6.33.5
 typing_extensions==4.15.0
-SQLAlchemy==2.0.46
+SQLAlchemy==2.0.48
 yarl==1.22.0
 cryptography==46.0.5
 aiohttp-csrf==0.1.1
 gunicorn==25.0.3
-alembic==1.17.1
+alembic==1.18.4
 audioop-lts==0.2.2
