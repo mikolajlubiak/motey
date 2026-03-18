@@ -15,7 +15,7 @@ discord.py==2.7.1
 protobuf==7.34.0
 typing_extensions==4.15.0
 SQLAlchemy==2.0.48
-yarl==1.22.0
+yarl==1.23.0
 cryptography==46.0.5
 aiohttp-csrf==0.1.1
 gunicorn==25.0.3
