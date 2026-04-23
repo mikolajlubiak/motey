@@ -7,7 +7,7 @@ attrs==26.1.0
 charset-normalizer==3.4.7
 frozenlist==1.8.0
 greenlet==3.4.0
-idna==3.12
+idna==3.13
 MarkupSafe==3.0.2
 multidict==6.7.1
 PyMySQL==1.1.1
