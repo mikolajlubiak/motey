@@ -16,7 +16,7 @@ protobuf==7.35.1
 typing_extensions==4.15.0
 SQLAlchemy==2.0.50
 yarl==1.24.2
-cryptography==48.0.0
+cryptography==48.0.1
 aiohttp-csrf==0.1.1
 gunicorn==26.0.0
 alembic==1.18.4
