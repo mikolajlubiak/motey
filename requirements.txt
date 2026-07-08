@@ -4,7 +4,7 @@ aiomysql==0.3.2
 aiosignal==1.4.0
 async-timeout==5.0.1
 attrs==26.1.0
-charset-normalizer==3.4.7
+charset-normalizer==3.4.9
 frozenlist==1.8.0
 greenlet==3.5.3
 idna==3.18
