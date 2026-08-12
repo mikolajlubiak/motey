@@ -19,5 +19,5 @@ yarl==1.24.5
 cryptography==50.0.0
 aiohttp-csrf==0.1.1
 gunicorn==26.0.0
-alembic==1.19.0
+alembic==1.19.1
 audioop-lts==0.2.2
