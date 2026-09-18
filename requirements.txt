@@ -14,7 +14,7 @@ PyMySQL==1.2.0
 discord.py==2.7.1
 protobuf==7.36.1
 typing_extensions==4.16.0
-SQLAlchemy==2.0.52
+SQLAlchemy==2.0.53
 yarl==1.24.5
 cryptography==50.0.1
 aiohttp-csrf==0.1.1
